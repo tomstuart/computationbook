@@ -22,45 +22,21 @@ class DFARulebook < Struct.new(:rules)
   end
 end
 
-rulebook = DFARulebook.new([
-  FARule.new(1, 'a', 2), FARule.new(1, 'b', 1),
-  FARule.new(2, 'a', 2), FARule.new(2, 'b', 3),
-  FARule.new(3, 'a', 3), FARule.new(3, 'b', 3)
-])
-rulebook.next_state(1, 'a')
-rulebook.next_state(1, 'b')
-rulebook.next_state(2, 'b')
-
 class DFA < Struct.new(:current_state, :accept_states, :rulebook)
   def accepting?
     accept_states.include?(current_state)
   end
-end
 
-DFA.new(1, [1, 3], rulebook).accepting?
-DFA.new(1, [3], rulebook).accepting?
-
-class DFA
   def read_character(character)
     self.current_state = rulebook.next_state(current_state, character)
   end
-end
 
-dfa = DFA.new(1, [3], rulebook); dfa.accepting?
-dfa.read_character('b'); dfa.accepting?
-3.times do dfa.read_character('a') end; dfa.accepting?
-dfa.read_character('b'); dfa.accepting?
-
-class DFA
   def read_string(string)
     string.chars.each do |character|
       read_character(character)
     end
   end
 end
-
-dfa = DFA.new(1, [3], rulebook); dfa.accepting?
-dfa.read_string('baaab'); dfa.accepting?
 
 class DFADesign < Struct.new(:start_state, :accept_states, :rulebook)
   def to_dfa
@@ -71,11 +47,6 @@ class DFADesign < Struct.new(:start_state, :accept_states, :rulebook)
     to_dfa.tap { |dfa| dfa.read_string(string) }.accepting?
   end
 end
-
-dfa_design = DFADesign.new(1, [3], rulebook)
-dfa_design.accepts?('a')
-dfa_design.accepts?('baa')
-dfa_design.accepts?('baba')
 
 require 'set'
 
@@ -91,71 +62,7 @@ class NFARulebook < Struct.new(:rules)
   def rules_for(state, character)
     rules.select { |rule| rule.applies_to?(state, character) }
   end
-end
 
-rulebook = NFARulebook.new([
-  FARule.new(1, 'a', 1), FARule.new(1, 'b', 1), FARule.new(1, 'b', 2),
-  FARule.new(2, 'a', 3), FARule.new(2, 'b', 3),
-  FARule.new(3, 'a', 4), FARule.new(3, 'b', 4)
-])
-rulebook.next_states(Set[1], 'b')
-rulebook.next_states(Set[1, 2], 'a')
-rulebook.next_states(Set[1, 3], 'b')
-
-class NFA < Struct.new(:current_states, :accept_states, :rulebook)
-  def accepting?
-    (current_states & accept_states).any?
-  end
-end
-
-NFA.new(Set[1], [4], rulebook).accepting?
-NFA.new(Set[1, 2, 4], [4], rulebook).accepting?
-
-class NFA
-  def read_character(character)
-    self.current_states = rulebook.next_states(current_states, character)
-  end
-
-  def read_string(string)
-    string.chars.each do |character|
-      read_character(character)
-    end
-  end
-end
-
-nfa = NFA.new(Set[1], [4], rulebook); nfa.accepting?
-nfa.read_character('b'); nfa.accepting?
-nfa.read_character('a'); nfa.accepting?
-nfa.read_character('b'); nfa.accepting?
-nfa = NFA.new(Set[1], [4], rulebook)
-nfa.accepting?
-nfa.read_string('bbbbb'); nfa.accepting?
-
-class NFADesign < Struct.new(:start_state, :accept_states, :rulebook)
-  def accepts?(string)
-    to_nfa.tap { |nfa| nfa.read_string(string) }.accepting?
-  end
-
-  def to_nfa
-    NFA.new(Set[start_state], accept_states, rulebook)
-  end
-end
-
-nfa_design = NFADesign.new(1, [4], rulebook)
-nfa_design.accepts?('bab')
-nfa_design.accepts?('bbbbb')
-nfa_design.accepts?('bbabb')
-rulebook = NFARulebook.new([
-  FARule.new(1, nil, 2), FARule.new(1, nil, 4),
-  FARule.new(2, 'a', 3),
-  FARule.new(3, 'a', 2),
-  FARule.new(4, 'a', 5),
-  FARule.new(5, 'a', 6),
-  FARule.new(6, 'a', 4)
-])
-rulebook.next_states(Set[1], nil)
-
-class NFARulebook
   def follow_free_moves(states)
     more_states = next_states(states, nil)
 
@@ -165,21 +72,41 @@ class NFARulebook
       follow_free_moves(states + more_states)
     end
   end
+
+  def alphabet
+    rules.map(&:character).compact.uniq
+  end
 end
 
-rulebook.follow_free_moves(Set[1])
+class NFA < Struct.new(:current_states, :accept_states, :rulebook)
+  def accepting?
+    (current_states & accept_states).any?
+  end
 
-class NFA
+  def read_character(character)
+    self.current_states = rulebook.next_states(current_states, character)
+  end
+
+  def read_string(string)
+    string.chars.each do |character|
+      read_character(character)
+    end
+  end
+
   def current_states
     rulebook.follow_free_moves(super)
   end
 end
 
-nfa_design = NFADesign.new(1, [2, 4], rulebook)
-nfa_design.accepts?('aa')
-nfa_design.accepts?('aaa')
-nfa_design.accepts?('aaaaa')
-nfa_design.accepts?('aaaaaa')
+class NFADesign < Struct.new(:start_state, :accept_states, :rulebook)
+  def accepts?(string)
+    to_nfa.tap { |nfa| nfa.read_string(string) }.accepting?
+  end
+
+  def to_nfa(current_states = Set[start_state])
+    NFA.new(current_states, accept_states, rulebook)
+  end
+end
 
 module Pattern
   def bracket(outer_precedence)
@@ -193,6 +120,10 @@ module Pattern
   def inspect
     "/#{self}/"
   end
+
+  def matches?(string)
+    to_nfa_design.accepts?(string)
+  end
 end
 
 class Empty
@@ -204,6 +135,14 @@ class Empty
 
   def precedence
     3
+  end
+
+  def to_nfa_design
+    start_state = Object.new
+    accept_states = [start_state]
+    rulebook = NFARulebook.new([])
+
+    NFADesign.new(start_state, accept_states, rulebook)
   end
 end
 
@@ -217,6 +156,15 @@ class Literal < Struct.new(:character)
   def precedence
     3
   end
+
+  def to_nfa_design
+    start_state = Object.new
+    accept_state = Object.new
+    rule = FARule.new(start_state, character, accept_state)
+    rulebook = NFARulebook.new([rule])
+
+    NFADesign.new(start_state, [accept_state], rulebook)
+  end
 end
 
 class Concatenate < Struct.new(:first, :second)
@@ -229,79 +177,7 @@ class Concatenate < Struct.new(:first, :second)
   def precedence
     1
   end
-end
 
-class Choose < Struct.new(:first, :second)
-  include Pattern
-
-  def to_s
-    [first, second].map { |pattern| pattern.bracket(precedence) }.join('|')
-  end
-
-  def precedence
-    0
-  end
-end
-
-class Repeat < Struct.new(:pattern)
-  include Pattern
-
-  def to_s
-    pattern.bracket(precedence) + '*'
-  end
-
-  def precedence
-    2
-  end
-end
-
-pattern =
-  Repeat.new(
-    Choose.new(
-      Concatenate.new(Literal.new('a'), Literal.new('b')),
-      Literal.new('a')
-    )
-  )
-
-class Empty
-  def to_nfa_design
-    start_state = Object.new
-    accept_states = [start_state]
-    rulebook = NFARulebook.new([])
-
-    NFADesign.new(start_state, accept_states, rulebook)
-  end
-end
-
-class Literal
-  def to_nfa_design
-    start_state = Object.new
-    accept_state = Object.new
-    rule = FARule.new(start_state, character, accept_state)
-    rulebook = NFARulebook.new([rule])
-
-    NFADesign.new(start_state, [accept_state], rulebook)
-  end
-end
-
-nfa_design = Empty.new.to_nfa_design
-nfa_design.accepts?('')
-nfa_design.accepts?('a')
-nfa_design = Literal.new('a').to_nfa_design
-nfa_design.accepts?('')
-nfa_design.accepts?('a')
-nfa_design.accepts?('b')
-
-module Pattern
-  def matches?(string)
-    to_nfa_design.accepts?(string)
-  end
-end
-
-Empty.new.matches?('a')
-Literal.new('a').matches?('a')
-
-class Concatenate
   def to_nfa_design
     first_nfa_design = first.to_nfa_design
     second_nfa_design = second.to_nfa_design
@@ -318,20 +194,17 @@ class Concatenate
   end
 end
 
-pattern = Concatenate.new(Literal.new('a'), Literal.new('b'))
-pattern.matches?('a')
-pattern.matches?('ab')
-pattern.matches?('abc')
-pattern =
-  Concatenate.new(
-    Literal.new('a'),
-    Concatenate.new(Literal.new('b'), Literal.new('c'))
-  )
-pattern.matches?('a')
-pattern.matches?('ab')
-pattern.matches?('abc')
+class Choose < Struct.new(:first, :second)
+  include Pattern
 
-class Choose
+  def to_s
+    [first, second].map { |pattern| pattern.bracket(precedence) }.join('|')
+  end
+
+  def precedence
+    0
+  end
+
   def to_nfa_design
     first_nfa_design = first.to_nfa_design
     second_nfa_design = second.to_nfa_design
@@ -348,12 +221,17 @@ class Choose
   end
 end
 
-pattern = Choose.new(Literal.new('a'), Literal.new('b'))
-pattern.matches?('a')
-pattern.matches?('b')
-pattern.matches?('c')
+class Repeat < Struct.new(:pattern)
+  include Pattern
 
-class Repeat
+  def to_s
+    pattern.bracket(precedence) + '*'
+  end
+
+  def precedence
+    2
+  end
+
   def to_nfa_design
     pattern_nfa_design = pattern.to_nfa_design
 
@@ -370,6 +248,143 @@ class Repeat
     NFADesign.new(start_state, accept_states, rulebook)
   end
 end
+
+class NFASimulation < Struct.new(:nfa_design)
+  def next_state(state, character)
+    nfa_design.to_nfa(state).tap { |nfa|
+      nfa.read_character(character)
+    }.current_states
+  end
+
+  def rules_for(state)
+    nfa_design.rulebook.alphabet.map { |character|
+      FARule.new(state, character, next_state(state, character))
+    }
+  end
+
+  def discover_states_and_rules(states)
+    rules = states.flat_map { |state| rules_for(state) }
+    more_states = rules.map(&:follow).to_set
+
+    if more_states.subset?(states)
+      [states, rules]
+    else
+      discover_states_and_rules(states + more_states)
+    end
+  end
+
+  def to_dfa_design
+    start_state   = nfa_design.to_nfa.current_states
+    states, rules = discover_states_and_rules(Set[start_state])
+    accept_states = states.select { |state| nfa_design.to_nfa(state).accepting? }
+
+    DFADesign.new(start_state, accept_states, DFARulebook.new(rules))
+  end
+end
+
+rulebook = DFARulebook.new([
+  FARule.new(1, 'a', 2), FARule.new(1, 'b', 1),
+  FARule.new(2, 'a', 2), FARule.new(2, 'b', 3),
+  FARule.new(3, 'a', 3), FARule.new(3, 'b', 3)
+])
+rulebook.next_state(1, 'a')
+rulebook.next_state(1, 'b')
+rulebook.next_state(2, 'b')
+
+DFA.new(1, [1, 3], rulebook).accepting?
+DFA.new(1, [3], rulebook).accepting?
+
+dfa = DFA.new(1, [3], rulebook); dfa.accepting?
+dfa.read_character('b'); dfa.accepting?
+3.times do dfa.read_character('a') end; dfa.accepting?
+dfa.read_character('b'); dfa.accepting?
+
+dfa = DFA.new(1, [3], rulebook); dfa.accepting?
+dfa.read_string('baaab'); dfa.accepting?
+
+dfa_design = DFADesign.new(1, [3], rulebook)
+dfa_design.accepts?('a')
+dfa_design.accepts?('baa')
+dfa_design.accepts?('baba')
+
+rulebook = NFARulebook.new([
+  FARule.new(1, 'a', 1), FARule.new(1, 'b', 1), FARule.new(1, 'b', 2),
+  FARule.new(2, 'a', 3), FARule.new(2, 'b', 3),
+  FARule.new(3, 'a', 4), FARule.new(3, 'b', 4)
+])
+rulebook.next_states(Set[1], 'b')
+rulebook.next_states(Set[1, 2], 'a')
+rulebook.next_states(Set[1, 3], 'b')
+
+NFA.new(Set[1], [4], rulebook).accepting?
+NFA.new(Set[1, 2, 4], [4], rulebook).accepting?
+
+nfa = NFA.new(Set[1], [4], rulebook); nfa.accepting?
+nfa.read_character('b'); nfa.accepting?
+nfa.read_character('a'); nfa.accepting?
+nfa.read_character('b'); nfa.accepting?
+nfa = NFA.new(Set[1], [4], rulebook)
+nfa.accepting?
+nfa.read_string('bbbbb'); nfa.accepting?
+
+nfa_design = NFADesign.new(1, [4], rulebook)
+nfa_design.accepts?('bab')
+nfa_design.accepts?('bbbbb')
+nfa_design.accepts?('bbabb')
+rulebook = NFARulebook.new([
+  FARule.new(1, nil, 2), FARule.new(1, nil, 4),
+  FARule.new(2, 'a', 3),
+  FARule.new(3, 'a', 2),
+  FARule.new(4, 'a', 5),
+  FARule.new(5, 'a', 6),
+  FARule.new(6, 'a', 4)
+])
+rulebook.next_states(Set[1], nil)
+
+rulebook.follow_free_moves(Set[1])
+
+nfa_design = NFADesign.new(1, [2, 4], rulebook)
+nfa_design.accepts?('aa')
+nfa_design.accepts?('aaa')
+nfa_design.accepts?('aaaaa')
+nfa_design.accepts?('aaaaaa')
+
+pattern =
+  Repeat.new(
+    Choose.new(
+      Concatenate.new(Literal.new('a'), Literal.new('b')),
+      Literal.new('a')
+    )
+  )
+
+nfa_design = Empty.new.to_nfa_design
+nfa_design.accepts?('')
+nfa_design.accepts?('a')
+nfa_design = Literal.new('a').to_nfa_design
+nfa_design.accepts?('')
+nfa_design.accepts?('a')
+nfa_design.accepts?('b')
+
+Empty.new.matches?('a')
+Literal.new('a').matches?('a')
+
+pattern = Concatenate.new(Literal.new('a'), Literal.new('b'))
+pattern.matches?('a')
+pattern.matches?('ab')
+pattern.matches?('abc')
+pattern =
+  Concatenate.new(
+    Literal.new('a'),
+    Concatenate.new(Literal.new('b'), Literal.new('c'))
+  )
+pattern.matches?('a')
+pattern.matches?('ab')
+pattern.matches?('abc')
+
+pattern = Choose.new(Literal.new('a'), Literal.new('b'))
+pattern.matches?('a')
+pattern.matches?('b')
+pattern.matches?('c')
 
 pattern = Repeat.new(Literal.new('a'))
 pattern.matches?('')
@@ -398,12 +413,6 @@ pattern = parse_tree.to_ast
 pattern.matches?('abaab')
 pattern.matches?('abba')
 
-class NFADesign
-  def to_nfa(current_states = Set[start_state])
-    NFA.new(current_states, accept_states, rulebook)
-  end
-end
-
 rulebook = NFARulebook.new([
   FARule.new(1, 'a', 1), FARule.new(1, 'a', 2), FARule.new(1, nil, 2),
   FARule.new(2, 'b', 3),
@@ -416,14 +425,6 @@ nfa_design.to_nfa(Set[3]).current_states
 nfa = nfa_design.to_nfa(Set[2, 3])
 nfa.read_character('b'); nfa.current_states
 
-class NFASimulation < Struct.new(:nfa_design)
-  def next_state(state, character)
-    nfa_design.to_nfa(state).tap { |nfa|
-      nfa.read_character(character)
-    }.current_states
-  end
-end
-
 simulation = NFASimulation.new(nfa_design)
 simulation.next_state(Set[1, 2], 'a')
 simulation.next_state(Set[1, 2], 'b')
@@ -431,51 +432,14 @@ simulation.next_state(Set[3, 2], 'b')
 simulation.next_state(Set[1, 3, 2], 'b')
 simulation.next_state(Set[1, 3, 2], 'a')
 
-class NFARulebook
-  def alphabet
-    rules.map(&:character).compact.uniq
-  end
-end
-
-class NFASimulation
-  def rules_for(state)
-    nfa_design.rulebook.alphabet.map { |character|
-      FARule.new(state, character, next_state(state, character))
-    }
-  end
-end
-
 rulebook.alphabet
 simulation.rules_for(Set[1, 2])
 simulation.rules_for(Set[3, 2])
-
-class NFASimulation
-  def discover_states_and_rules(states)
-    rules = states.flat_map { |state| rules_for(state) }
-    more_states = rules.map(&:follow).to_set
-
-    if more_states.subset?(states)
-      [states, rules]
-    else
-      discover_states_and_rules(states + more_states)
-    end
-  end
-end
 
 start_state = nfa_design.to_nfa.current_states
 simulation.discover_states_and_rules(Set[start_state])
 nfa_design.to_nfa(Set[1, 2]).accepting?
 nfa_design.to_nfa(Set[2, 3]).accepting?
-
-class NFASimulation
-  def to_dfa_design
-    start_state   = nfa_design.to_nfa.current_states
-    states, rules = discover_states_and_rules(Set[start_state])
-    accept_states = states.select { |state| nfa_design.to_nfa(state).accepting? }
-
-    DFADesign.new(start_state, accept_states, DFARulebook.new(rules))
-  end
-end
 
 dfa_design = simulation.to_dfa_design
 dfa_design.accepts?('aaa')

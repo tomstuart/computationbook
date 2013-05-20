@@ -163,6 +163,34 @@ class SKISymbol < Struct.new(:name)
   def inspect
     to_s
   end
+
+  def combinator
+    self
+  end
+
+  def arguments
+    []
+  end
+
+  def callable?(*arguments)
+    false
+  end
+
+  def reducible?
+    false
+  end
+
+  def as_a_function_of(name)
+    if self.name == name
+      I
+    else
+      SKICall.new(K, self)
+    end
+  end
+
+  def to_iota
+    self
+  end
 end
 
 class SKICall < Struct.new(:left, :right)
@@ -173,9 +201,45 @@ class SKICall < Struct.new(:left, :right)
   def inspect
     to_s
   end
+
+  def combinator
+    left.combinator
+  end
+
+  def arguments
+    left.arguments + [right]
+  end
+
+  def reducible?
+    left.reducible? || right.reducible? || combinator.callable?(*arguments)
+  end
+
+  def reduce
+    if left.reducible?
+      SKICall.new(left.reduce, right)
+    elsif right.reducible?
+      SKICall.new(left, right.reduce)
+    else
+      combinator.call(*arguments)
+    end
+  end
+
+  def as_a_function_of(name)
+    left_function = left.as_a_function_of(name)
+    right_function = right.as_a_function_of(name)
+
+    SKICall.new(SKICall.new(S, left_function), right_function)
+  end
+
+  def to_iota
+    SKICall.new(left.to_iota, right.to_iota)
+  end
 end
 
 class SKICombinator < SKISymbol
+  def as_a_function_of(name)
+    SKICall.new(K, self)
+  end
 end
 
 S, K, I = [:S, :K, :I].map { |name| SKICombinator.new(name) }
@@ -206,26 +270,6 @@ second_argument = expression.left.right
 third_argument = expression.right
 combinator.call(first_argument, second_argument, third_argument)
 
-class SKISymbol
-  def combinator
-    self
-  end
-
-  def arguments
-    []
-  end
-end
-
-class SKICall
-  def combinator
-    left.combinator
-  end
-
-  def arguments
-    left.arguments + [right]
-  end
-end
-
 expression
 combinator = expression.combinator
 arguments = expression.arguments
@@ -238,12 +282,6 @@ expression = SKICall.new(SKICall.new(S, x), y)
 combinator = expression.combinator
 arguments = expression.arguments
 combinator.call(*arguments)
-
-class SKISymbol
-  def callable?(*arguments)
-    false
-  end
-end
 
 def S.callable?(*arguments)
   arguments.length == 3
@@ -270,28 +308,6 @@ expression.combinator.callable?(*expression.arguments)
 expression = SKICall.new(SKICall.new(SKICall.new(S, x), y), z)
 expression.combinator.callable?(*expression.arguments)
 
-class SKISymbol
-  def reducible?
-    false
-  end
-end
-
-class SKICall
-  def reducible?
-    left.reducible? || right.reducible? || combinator.callable?(*arguments)
-  end
-
-  def reduce
-    if left.reducible?
-      SKICall.new(left.reduce, right)
-    elsif right.reducible?
-      SKICall.new(left, right.reduce)
-    else
-      combinator.call(*arguments)
-    end
-  end
-end
-
 swap = SKICall.new(SKICall.new(S, SKICall.new(K, SKICall.new(S, I))), K)
 expression = SKICall.new(SKICall.new(swap, x), y)
 
@@ -299,31 +315,6 @@ while expression.reducible?
   puts expression
   expression = expression.reduce
 end; puts expression
-
-class SKISymbol
-  def as_a_function_of(name)
-    if self.name == name
-      I
-    else
-      SKICall.new(K, self)
-    end
-  end
-end
-
-class SKICombinator
-  def as_a_function_of(name)
-    SKICall.new(K, self)
-  end
-end
-
-class SKICall
-  def as_a_function_of(name)
-    left_function = left.as_a_function_of(name)
-    right_function = right.as_a_function_of(name)
-
-    SKICall.new(SKICall.new(S, left_function), right_function)
-  end
-end
 
 original = SKICall.new(SKICall.new(S, K), I)
 function = original.as_a_function_of(:x)
@@ -390,18 +381,6 @@ def IOTA.callable?(*arguments)
   arguments.length == 1
 end
 
-class SKISymbol
-  def to_iota
-    self
-  end
-end
-
-class SKICall
-  def to_iota
-    SKICall.new(left.to_iota, right.to_iota)
-  end
-end
-
 def S.to_iota
   SKICall.new(IOTA, SKICall.new(IOTA, SKICall.new(IOTA, SKICall.new(IOTA, IOTA))))
 end
@@ -450,6 +429,14 @@ class TagRule < Struct.new(:first_character, :append_characters)
   def follow(string)
     string + append_characters
   end
+
+  def alphabet
+    ([first_character] + append_characters.chars.entries).uniq
+  end
+
+  def to_cyclic(encoder)
+    CyclicTagRule.new(encoder.encode_string(append_characters))
+  end
 end
 
 class TagRulebook < Struct.new(:deletion_number, :rules)
@@ -460,11 +447,62 @@ class TagRulebook < Struct.new(:deletion_number, :rules)
   def rule_for(string)
     rules.detect { |r| r.applies_to?(string) }
   end
+
+  def applies_to?(string)
+    !rule_for(string).nil? && string.length >= deletion_number
+  end
+
+  def alphabet
+    rules.flat_map(&:alphabet).uniq
+  end
+
+  def cyclic_rules(encoder)
+    encoder.alphabet.map { |character| cyclic_rule_for(character, encoder) }
+  end
+
+  def cyclic_rule_for(character, encoder)
+    rule = rule_for(character)
+
+    if rule.nil?
+      CyclicTagRule.new('')
+    else
+      rule.to_cyclic(encoder)
+    end
+  end
+
+  def cyclic_padding_rules(encoder)
+    Array.new(encoder.alphabet.length, CyclicTagRule.new('')) * (deletion_number - 1)
+  end
+
+  def to_cyclic(encoder)
+    CyclicTagRulebook.new(cyclic_rules(encoder) + cyclic_padding_rules(encoder))
+  end
 end
 
 class TagSystem < Struct.new(:current_string, :rulebook)
   def step
     self.current_string = rulebook.next_string(current_string)
+  end
+
+  def run
+    while rulebook.applies_to?(current_string)
+      puts current_string
+      step
+    end
+
+    puts current_string
+  end
+
+  def alphabet
+    (rulebook.alphabet + current_string.chars.entries).uniq.sort
+  end
+
+  def encoder
+    CyclicTagEncoder.new(alphabet)
+  end
+
+  def to_cyclic
+    TagSystem.new(encoder.encode_string(current_string), rulebook.to_cyclic(encoder))
   end
 end
 
@@ -474,23 +512,6 @@ system = TagSystem.new('aabbbbbb', rulebook)
   puts system.current_string
   system.step
 end; puts system.current_string
-
-class TagRulebook
-  def applies_to?(string)
-    !rule_for(string).nil? && string.length >= deletion_number
-  end
-end
-
-class TagSystem
-  def run
-    while rulebook.applies_to?(current_string)
-      puts current_string
-      step
-    end
-
-    puts current_string
-  end
-end
 
 rulebook = TagRulebook.new(2, [TagRule.new('a', 'cc'), TagRule.new('b', 'dddd')])
 system = TagSystem.new('aabbbbbb', rulebook)
@@ -574,24 +595,6 @@ end; puts system.current_string
   system.step
 end; puts system.current_string
 
-class TagRule
-  def alphabet
-    ([first_character] + append_characters.chars.entries).uniq
-  end
-end
-
-class TagRulebook
-  def alphabet
-    rules.flat_map(&:alphabet).uniq
-  end
-end
-
-class TagSystem
-  def alphabet
-    (rulebook.alphabet + current_string.chars.entries).uniq.sort
-  end
-end
-
 rulebook = TagRulebook.new(2, [TagRule.new('a', 'ccdd'), TagRule.new('b', 'dd')])
 system = TagSystem.new('aabbbb', rulebook)
 system.alphabet
@@ -607,62 +610,16 @@ class CyclicTagEncoder < Struct.new(:alphabet)
   end
 end
 
-class TagSystem
-  def encoder
-    CyclicTagEncoder.new(alphabet)
-  end
-end
-
 encoder = system.encoder
 encoder.encode_character('c')
 encoder.encode_string('cab')
 
-class TagRule
-  def to_cyclic(encoder)
-    CyclicTagRule.new(encoder.encode_string(append_characters))
-  end
-end
-
 rule = system.rulebook.rules.first
 rule.to_cyclic(encoder)
 
-class TagRulebook
-  def cyclic_rules(encoder)
-    encoder.alphabet.map { |character| cyclic_rule_for(character, encoder) }
-  end
-
-  def cyclic_rule_for(character, encoder)
-    rule = rule_for(character)
-
-    if rule.nil?
-      CyclicTagRule.new('')
-    else
-      rule.to_cyclic(encoder)
-    end
-  end
-end
-
 system.rulebook.cyclic_rules(encoder)
 
-class TagRulebook
-  def cyclic_padding_rules(encoder)
-    Array.new(encoder.alphabet.length, CyclicTagRule.new('')) * (deletion_number - 1)
-  end
-end
-
 system.rulebook.cyclic_padding_rules(encoder)
-
-class TagRulebook
-  def to_cyclic(encoder)
-    CyclicTagRulebook.new(cyclic_rules(encoder) + cyclic_padding_rules(encoder))
-  end
-end
-
-class TagSystem
-  def to_cyclic
-    TagSystem.new(encoder.encode_string(current_string), rulebook.to_cyclic(encoder))
-  end
-end
 
 cyclic_system = system.to_cyclic
 cyclic_system.run

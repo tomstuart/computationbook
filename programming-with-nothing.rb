@@ -544,6 +544,22 @@ class LCVariable < Struct.new(:name)
   def inspect
     to_s
   end
+
+  def replace(name, replacement)
+    if self.name == name
+      replacement
+    else
+      self
+    end
+  end
+
+  def callable?
+    false
+  end
+
+  def reducible?
+    false
+  end
 end
 
 class LCFunction < Struct.new(:parameter, :body)
@@ -554,6 +570,26 @@ class LCFunction < Struct.new(:parameter, :body)
   def inspect
     to_s
   end
+
+  def replace(name, replacement)
+    if parameter == name
+      self
+    else
+      LCFunction.new(parameter, body.replace(name, replacement))
+    end
+  end
+
+  def call(argument)
+    body.replace(parameter, argument)
+  end
+
+  def callable?
+    true
+  end
+
+  def reducible?
+    false
+  end
 end
 
 class LCCall < Struct.new(:left, :right)
@@ -563,6 +599,28 @@ class LCCall < Struct.new(:left, :right)
 
   def inspect
     to_s
+  end
+
+  def replace(name, replacement)
+    LCCall.new(left.replace(name, replacement), right.replace(name, replacement))
+  end
+
+  def callable?
+    false
+  end
+
+  def reducible?
+    left.reducible? || right.reducible? || left.callable?
+  end
+
+  def reduce
+    if left.reducible?
+      LCCall.new(left.reduce, right)
+    elsif right.reducible?
+      LCCall.new(left, right.reduce)
+    else
+      left.call(right)
+    end
   end
 end
 
@@ -592,32 +650,6 @@ add =
       LCCall.new(LCCall.new(LCVariable.new(:n), increment), LCVariable.new(:m))
     )
   )
-
-class LCVariable
-  def replace(name, replacement)
-    if self.name == name
-      replacement
-    else
-      self
-    end
-  end
-end
-
-class LCFunction
-  def replace(name, replacement)
-    if parameter == name
-      self
-    else
-      LCFunction.new(parameter, body.replace(name, replacement))
-    end
-  end
-end
-
-class LCCall
-  def replace(name, replacement)
-    LCCall.new(left.replace(name, replacement), right.replace(name, replacement))
-  end
-end
 
 expression = LCVariable.new(:x)
 expression.replace(:x, LCFunction.new(:y, LCVariable.new(:y)))
@@ -655,12 +687,6 @@ expression =
 replacement = LCCall.new(LCVariable.new(:z), LCVariable.new(:x))
 expression.replace(:y, replacement)
 
-class LCFunction
-  def call(argument)
-    body.replace(parameter, argument)
-  end
-end
-
 function =
   LCFunction.new(:x,
     LCFunction.new(:y,
@@ -669,52 +695,6 @@ function =
   )
 argument = LCFunction.new(:z, LCVariable.new(:z))
 function.call(argument)
-
-class LCVariable
-  def callable?
-    false
-  end
-end
-
-class LCFunction
-  def callable?
-    true
-  end
-end
-
-class LCCall
-  def callable?
-    false
-  end
-end
-
-class LCVariable
-  def reducible?
-    false
-  end
-end
-
-class LCFunction
-  def reducible?
-    false
-  end
-end
-
-class LCCall
-  def reducible?
-    left.reducible? || right.reducible? || left.callable?
-  end
-
-  def reduce
-    if left.reducible?
-      LCCall.new(left.reduce, right)
-    elsif right.reducible?
-      LCCall.new(left, right.reduce)
-    else
-      left.call(right)
-    end
-  end
-end
 
 expression = LCCall.new(LCCall.new(add, one), one)
 while expression.reducible?
