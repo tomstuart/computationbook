@@ -1,3 +1,5 @@
+require_relative 'ski_call'
+
 class SKISymbol < Struct.new(:name)
   def to_s
     name.to_s

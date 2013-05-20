@@ -1,3 +1,5 @@
+require_relative 'tm_configuration'
+
 class TMRule < Struct.new(:state, :character, :next_state,
                           :write_character, :direction)
   def applies_to?(configuration)

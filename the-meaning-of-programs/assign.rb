@@ -1,3 +1,5 @@
+require_relative 'do_nothing'
+
 class Assign < Struct.new(:name, :expression)
   def to_s
     "#{name} = #{expression}"

@@ -1,3 +1,5 @@
+require_relative 'number'
+
 class Add < Struct.new(:left, :right)
   def to_s
     "#{left} + #{right}"

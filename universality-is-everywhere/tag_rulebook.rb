@@ -1,3 +1,6 @@
+require_relative 'cyclic_tag_rule'
+require_relative 'cyclic_tag_rulebook'
+
 class TagRulebook < Struct.new(:deletion_number, :rules)
   def next_string(string)
     rule_for(string).follow(string).slice(deletion_number..-1)

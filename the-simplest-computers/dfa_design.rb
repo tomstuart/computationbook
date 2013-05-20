@@ -1,3 +1,5 @@
+require_relative 'dfa'
+
 class DFADesign < Struct.new(:start_state, :accept_states, :rulebook)
   def to_dfa
     DFA.new(start_state, accept_states, rulebook)

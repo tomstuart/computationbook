@@ -1,3 +1,5 @@
+require_relative 'tag_rule'
+
 class CyclicTagRule < TagRule
   FIRST_CHARACTER = '1'
 

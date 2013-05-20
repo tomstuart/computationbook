@@ -1,3 +1,7 @@
+require_relative 'npda'
+require_relative 'pda_configuration'
+require_relative 'stack'
+
 require 'set'
 
 class NPDADesign < Struct.new(:start_state, :bottom_character,

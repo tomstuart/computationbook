@@ -1,3 +1,5 @@
+require_relative 'number'
+
 class Multiply < Struct.new(:left, :right)
   def to_s
     "#{left} * #{right}"

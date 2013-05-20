@@ -1,3 +1,6 @@
+require_relative '../the-meaning-of-programs/if'
+require_relative 'type'
+
 class If
   def type(context)
     if condition.type(context) == Type::BOOLEAN &&

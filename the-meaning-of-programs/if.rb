@@ -1,3 +1,5 @@
+require_relative 'boolean'
+
 class If < Struct.new(:condition, :consequence, :alternative)
   def to_s
     "if (#{condition}) { #{consequence} } else { #{alternative} }"

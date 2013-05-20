@@ -1,3 +1,5 @@
+require_relative 'do_nothing'
+
 class Sequence < Struct.new(:first, :second)
   def to_s
     "#{first}; #{second}"

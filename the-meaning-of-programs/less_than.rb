@@ -1,3 +1,5 @@
+require_relative 'boolean'
+
 class LessThan < Struct.new(:left, :right)
   def to_s
     "#{left} < #{right}"

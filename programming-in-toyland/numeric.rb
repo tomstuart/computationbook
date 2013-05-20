@@ -1,3 +1,5 @@
+require_relative 'sign'
+
 class Numeric
   def sign
     if self < 0

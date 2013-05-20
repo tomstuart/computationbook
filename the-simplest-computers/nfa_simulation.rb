@@ -1,3 +1,7 @@
+require_relative 'dfa_design'
+require_relative 'dfa_rulebook'
+require_relative 'fa_rule'
+
 require 'set'
 
 class NFASimulation < Struct.new(:nfa_design)

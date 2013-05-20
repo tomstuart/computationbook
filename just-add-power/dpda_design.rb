@@ -1,3 +1,7 @@
+require_relative 'dpda'
+require_relative 'pda_configuration'
+require_relative 'stack'
+
 class DPDADesign < Struct.new(:start_state, :bottom_character,
                               :accept_states, :rulebook)
   def accepts?(string)

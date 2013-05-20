@@ -1,3 +1,5 @@
+require_relative 'cyclic_tag_encoder'
+
 class TagSystem < Struct.new(:current_string, :rulebook)
   def step
     self.current_string = rulebook.next_string(current_string)

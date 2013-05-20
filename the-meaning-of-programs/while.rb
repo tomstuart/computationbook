@@ -1,3 +1,8 @@
+require_relative 'boolean'
+require_relative 'do_nothing'
+require_relative 'if'
+require_relative 'sequence'
+
 class While < Struct.new(:condition, :body)
   def to_s
     "while (#{condition}) { #{body} }"

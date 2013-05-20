@@ -1,3 +1,8 @@
+require_relative 'fa_rule'
+require_relative 'nfa_design'
+require_relative 'nfa_rulebook'
+require_relative 'pattern'
+
 class Literal < Struct.new(:character)
   include Pattern
 
