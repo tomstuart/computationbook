@@ -28,11 +28,12 @@ $ irb -I.
 => x
 >> expression = SKICall.new(identity, x)
 => S[K][K[K]][x]
->> while expression.reducible?; puts expression; expression = expression.reduce; end; expression
+>> while expression.reducible?; puts expression; expression = expression.reduce; end; puts expression
 S[K][K[K]][x]
 K[x][K[K][x]]
 K[x][K]
-=> x
+x
+=> nil
 ```
 
 If you run `bundle install` to install [Treetop](http://treetop.rubyforge.org/), you can try out the parsers:
