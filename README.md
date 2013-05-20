@@ -1,7 +1,7 @@
 Understanding Computation example code
 ======================================
 
-This is the example code for [Understanding Computation](http://computationbook.com/), an O’Reilly book about computation theory. (Here’s [a sample chapter](http://cdn.oreillystatic.com/oreilly/booksamplers/9781449329273_sampler.pdf).)
+This is the example code for [Understanding Computation](http://computationbook.com/), an O’Reilly book about computation theory. (Here’s [a sample chapter](http://cdn.oreillystatic.com/oreilly/booksamplers/9781449329273_sampler.pdf).) Ruby 1.9 or 2.0 is required.
 
 Right now it’s a pretty rough dump of code from the book. Each chapter has its own directory:
 
