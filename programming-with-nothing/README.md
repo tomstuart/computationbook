@@ -42,3 +42,45 @@ Buzz
 ```
 
 Watch [this video](http://rubymanor.org/3/videos/programming_with_nothing/) for more explanation.
+
+There’s also an implementation of the call-by-value small-step operational semantics of the lambda calculus, along with a parser for Ruby-style lambda calculus expressions:
+
+```irb
+$ cd programming-with-nothing
+$ bundle exec irb -I.
+>> require 'treetop'
+=> true
+>> Treetop.load('lambda_calculus')
+=> LambdaCalculusParser
+>> require 'programming-with-nothing'
+fizzbuzz.rb:13: warning: already initialized constant TRUE
+fizzbuzz.rb:14: warning: already initialized constant FALSE
+=> true
+>> one = LambdaCalculusParser.new.parse('-> p { -> x { p[x] } }').to_ast
+=> -> p { -> x { p[x] } }
+>> increment = LambdaCalculusParser.new.parse('-> n { -> p { -> x { p[n[p][x]] } } }').to_ast
+=> -> n { -> p { -> x { p[n[p][x]] } } }
+>> add = LambdaCalculusParser.new.parse("-> m { -> n { n[#{increment}][m] } }").to_ast
+=> -> m { -> n { n[-> n { -> p { -> x { p[n[p][x]] } } }][m] } }
+>> expression = LCCall.new(LCCall.new(add, one), one)
+=> -> m { -> n { n[-> n { -> p { -> x { p[n[p][x]] } } }][m] } }[-> p { -> x { p[x] } }][-> p { -> x { p[x] } }]
+>> while expression.reducible?; puts expression; expression = expression.reduce; end; puts expression
+-> m { -> n { n[-> n { -> p { -> x { p[n[p][x]] } } }][m] } }[-> p { -> x { p[x] } }][-> p { -> x { p[x] } }]
+-> n { n[-> n { -> p { -> x { p[n[p][x]] } } }][-> p { -> x { p[x] } }] }[-> p { -> x { p[x] } }]
+-> p { -> x { p[x] } }[-> n { -> p { -> x { p[n[p][x]] } } }][-> p { -> x { p[x] } }]
+-> x { -> n { -> p { -> x { p[n[p][x]] } } }[x] }[-> p { -> x { p[x] } }]
+-> n { -> p { -> x { p[n[p][x]] } } }[-> p { -> x { p[x] } }]
+-> p { -> x { p[-> p { -> x { p[x] } }[p][x]] } }
+=> nil
+>> inc, zero = LCVariable.new(:inc), LCVariable.new(:zero)
+=> [inc, zero]
+>> expression = LCCall.new(LCCall.new(expression, inc), zero)
+=> -> p { -> x { p[-> p { -> x { p[x] } }[p][x]] } }[inc][zero]
+>> while expression.reducible?; puts expression; expression = expression.reduce; end; puts expression
+-> p { -> x { p[-> p { -> x { p[x] } }[p][x]] } }[inc][zero]
+-> x { inc[-> p { -> x { p[x] } }[inc][x]] }[zero]
+inc[-> p { -> x { p[x] } }[inc][zero]]
+inc[-> x { inc[x] }[zero]]
+inc[inc[zero]]
+=> nil
+```
