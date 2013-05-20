@@ -1,0 +1,5 @@
+require_relative 'dtm'
+require_relative 'dtm_rulebook'
+require_relative 'tape'
+require_relative 'tm_configuration'
+require_relative 'tm_rule'
