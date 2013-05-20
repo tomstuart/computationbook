@@ -1,0 +1,33 @@
+grammar LambdaCalculus
+  rule expression
+    calls / variable / function
+  end
+
+  rule calls
+    first:(variable / function) rest:('[' expression ']')+ {
+      def to_ast
+        arguments.map(&:to_ast).inject(first.to_ast) { |l, r| LCCall.new(l, r) }
+      end
+
+      def arguments
+        rest.elements.map(&:expression)
+      end
+    }
+  end
+
+  rule variable
+    [a-z]+ {
+      def to_ast
+        LCVariable.new(text_value.to_sym)
+      end
+    }
+  end
+
+  rule function
+    '-> ' parameter:[a-z]+ ' { ' body:expression ' }' {
+      def to_ast
+        LCFunction.new(parameter.text_value.to_sym, body.to_ast)
+      end
+    }
+  end
+end

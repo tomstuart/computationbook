@@ -1,0 +1,65 @@
+grammar Simple
+  rule statement
+    while / assign
+  end
+
+  rule while
+    'while (' condition:expression ') { ' body:statement ' }' {
+      def to_ast
+        While.new(condition.to_ast, body.to_ast)
+      end
+    }
+  end
+
+  rule assign
+    name:[a-z]+ ' = ' expression {
+      def to_ast
+        Assign.new(name.text_value.to_sym, expression.to_ast)
+      end
+    }
+  end
+
+  rule expression
+    less_than
+  end
+
+  rule less_than
+    left:multiply ' < ' right:less_than {
+      def to_ast
+        LessThan.new(left.to_ast, right.to_ast)
+      end
+    }
+    /
+    multiply
+  end
+
+  rule multiply
+    left:term ' * ' right:multiply {
+      def to_ast
+        Multiply.new(left.to_ast, right.to_ast)
+      end
+    }
+    /
+    term
+  end
+
+  rule term
+    number / variable
+  end
+
+  rule number
+    [0-9]+ {
+      def to_ast
+        Number.new(text_value.to_i)
+      end
+    }
+  end
+
+  rule variable
+    [a-z]+ {
+      def to_ast
+        Variable.new(text_value.to_sym)
+      end
+    }
+  end
+end
