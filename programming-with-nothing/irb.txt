@@ -52,10 +52,6 @@ def zero(proc, x)
   x
 end
 
-def to_integer(proc)
-  proc[-> n { n + 1 }][0]
-end
-
 to_integer(ZERO)
 to_integer(THREE)
 to_integer(FIVE)
@@ -100,10 +96,6 @@ IF =
   }
 IF[TRUE]['happy']['sad']
 IF[FALSE]['happy']['sad']
-
-def to_boolean(proc)
-  IF[proc][true][false]
-end
 
 -> y {
   b[x][y]
@@ -238,17 +230,6 @@ to_integer(FIRST[REST[REST[my_list]]])
 to_boolean(IS_EMPTY[my_list])
 to_boolean(IS_EMPTY[EMPTY])
 
-def to_array(proc)
-  array = []
-
-  until to_boolean(IS_EMPTY[proc])
-    array.push(FIRST[proc])
-    proc = REST[proc]
-  end
-
-  array
-end
-
 to_array(my_list)
 to_array(my_list).map { |p| to_integer(p) }
 
@@ -266,14 +247,6 @@ to_integer(FOLD[RANGE[ONE][FIVE]][ZERO][ADD])
 to_integer(FOLD[RANGE[ONE][FIVE]][ONE][MULTIPLY])
 my_list = MAP[RANGE[ONE][FIVE]][INCREMENT]
 to_array(my_list).map { |p| to_integer(p) }
-
-def to_char(c)
-  '0123456789BFiuz'.slice(to_integer(c))
-end
-
-def to_string(s)
-  to_array(s).map { |c| to_char(c) }.join
-end
 
 to_char(ZED)
 to_string(FIZZBUZZ)
