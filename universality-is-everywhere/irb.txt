@@ -155,24 +155,8 @@ ten
 divide(ten, three)
 divide(six, zero)
 
-S, K, I = [:S, :K, :I].map { |name| SKICombinator.new(name) }
 x = SKISymbol.new(:x)
 expression = SKICall.new(SKICall.new(S, K), SKICall.new(I, x))
-
-# reduce S[a][b][c] to a[c][b[c]]
-def S.call(a, b, c)
-  SKICall.new(SKICall.new(a, c), SKICall.new(b, c))
-end
-
-# reduce K[a][b] to a
-def K.call(a, b)
-  a
-end
-
-# reduce I[a] to a
-def I.call(a)
-  a
-end
 
 y, z = SKISymbol.new(:y), SKISymbol.new(:z)
 S.call(x, y, z)
@@ -195,18 +179,6 @@ expression = SKICall.new(SKICall.new(S, x), y)
 combinator = expression.combinator
 arguments = expression.arguments
 combinator.call(*arguments)
-
-def S.callable?(*arguments)
-  arguments.length == 3
-end
-
-def K.callable?(*arguments)
-  arguments.length == 2
-end
-
-def I.callable?(*arguments)
-  arguments.length == 1
-end
 
 def add(x, y)
   x + y
@@ -265,28 +237,6 @@ while expression.reducible?
   puts expression
   expression = expression.reduce
 end; puts expression
-IOTA = SKICombinator.new('ɩ')
-
-# reduce ɩ[a] to a[S][K]
-def IOTA.call(a)
-  SKICall.new(SKICall.new(a, S), K)
-end
-
-def IOTA.callable?(*arguments)
-  arguments.length == 1
-end
-
-def S.to_iota
-  SKICall.new(IOTA, SKICall.new(IOTA, SKICall.new(IOTA, SKICall.new(IOTA, IOTA))))
-end
-
-def K.to_iota
-  SKICall.new(IOTA, SKICall.new(IOTA, SKICall.new(IOTA, IOTA)))
-end
-
-def I.to_iota
-  SKICall.new(IOTA, IOTA)
-end
 
 expression = S.to_iota
 while expression.reducible?
