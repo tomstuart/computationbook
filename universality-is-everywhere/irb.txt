@@ -35,14 +35,6 @@ to_array(TAPE_LEFT[current_tape]).map { |p| to_integer(p) }
 to_integer(TAPE_MIDDLE[current_tape])
 to_array(TAPE_RIGHT[current_tape]).map { |p| to_integer(p) }
 
-def zero
-  0
-end
-
-def increment(n)
-  n + 1
-end
-
 zero
 increment(zero)
 increment(increment(zero))
@@ -64,20 +56,6 @@ def add_three(x)
 end
 
 add_three(two)
-
-def recurse(f, g, *values)
-  *other_values, last_value = values
-
-  if last_value.zero?
-    send(f, *other_values)
-  else
-    easier_last_value = last_value - 1
-    easier_values = other_values + [easier_last_value]
-
-    easier_result = recurse(f, g, *easier_values)
-    send(g, *easier_values, easier_result)
-  end
-end
 
 def add_zero_to_x(x)
   x
@@ -134,12 +112,6 @@ end
 decrement(six)
 subtract(six, two)
 subtract(two, six)
-
-def minimize
-  n = 0
-  n = n + 1 until yield(n).zero?
-  n
-end
 
 def divide(x, y)
   minimize { |n| subtract(increment(x), multiply(y, increment(n))) }
