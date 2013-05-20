@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'do_nothing'
 
 class Sequence < Struct.new(:first, :second)

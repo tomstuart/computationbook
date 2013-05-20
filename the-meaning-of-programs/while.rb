@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'boolean'
 require_relative 'do_nothing'
 require_relative 'if'

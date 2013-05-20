@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'boolean'
 
 class If < Struct.new(:condition, :consequence, :alternative)

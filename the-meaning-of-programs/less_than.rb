@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require_relative 'boolean'
 
 class LessThan < Struct.new(:left, :right)

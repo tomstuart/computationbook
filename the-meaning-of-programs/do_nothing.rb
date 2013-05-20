@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class DoNothing
   def to_s
     'do-nothing'
