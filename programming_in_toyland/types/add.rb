@@ -1,4 +1,4 @@
-require_relative '../../the_meaning_of_programs/add'
+require_relative '../../the_meaning_of_programs/syntax/add'
 require_relative 'type'
 
 class Add

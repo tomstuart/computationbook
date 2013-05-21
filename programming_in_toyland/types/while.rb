@@ -1,4 +1,4 @@
-require_relative '../../the_meaning_of_programs/while'
+require_relative '../../the_meaning_of_programs/syntax/while'
 require_relative 'type'
 
 class While

@@ -1,4 +1,4 @@
-require_relative '../../the_meaning_of_programs/do_nothing'
+require_relative '../../the_meaning_of_programs/syntax/do_nothing'
 require_relative 'type'
 
 class DoNothing
