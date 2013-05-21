@@ -6,8 +6,6 @@ This chapter includes an implementation of FizzBuzz written with just procs:
 ```irb
 $ irb -I.
 >> require 'programming_with_nothing'
-fizzbuzz.rb:13: warning: already initialized constant TRUE
-fizzbuzz.rb:14: warning: already initialized constant FALSE
 => true
 >> MULTIPLY[THREE][FIVE]
 => #<Proc (lambda)>
@@ -51,8 +49,6 @@ $ bundle exec irb -I.
 >> Treetop.load('programming_with_nothing/lambda_calculus/lambda_calculus')
 => LambdaCalculusParser
 >> require 'programming_with_nothing'
-fizzbuzz.rb:13: warning: already initialized constant TRUE
-fizzbuzz.rb:14: warning: already initialized constant FALSE
 => true
 >> one = LambdaCalculusParser.new.parse('-> p { -> x { p[x] } }').to_ast
 => -> p { -> x { p[x] } }
