@@ -1,0 +1,5 @@
+require_relative 'the_ultimate_machine/dtm'
+require_relative 'the_ultimate_machine/dtm_rulebook'
+require_relative 'the_ultimate_machine/tape'
+require_relative 'the_ultimate_machine/tm_configuration'
+require_relative 'the_ultimate_machine/tm_rule'

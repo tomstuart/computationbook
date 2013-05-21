@@ -14,13 +14,13 @@ Right now it’s a pretty rough dump of code from the book. Each chapter has its
 * Chapter 8: [Impossible Programs](impossible_programs)
 * Chapter 9: [Programming in Toyland](programming_in_toyland)
 
-Each directory contains definitions of the classes implemented in that chapter, as well as a file named after the chapter (e.g. [`just_add_power/just_add_power.rb`](just_add_power/just_add_power.rb)) that can be `require`d to load all the code for that chapter.
+Each directory contains definitions of the classes implemented in that chapter. There’s also a file named after each chapter (e.g. [`just_add_power.rb`](just_add_power.rb)) that can be `require`d to load all the code for that chapter.
 
 For example:
 
 ```irb
 $ irb -I.
->> require 'universality_is_everywhere/universality_is_everywhere'
+>> require 'universality_is_everywhere'
 => true
 >> identity = SKICall.new(SKICall.new(S, K), SKICall.new(K, K))
 => S[K][K[K]]
@@ -44,7 +44,7 @@ $ bundle exec irb -I.
 => true
 >> Treetop.load('the_meaning_of_programs/simple')
 => SimpleParser
->> require 'the_meaning_of_programs/the_meaning_of_programs'
+>> require 'the_meaning_of_programs'
 => true
 >> program = SimpleParser.new.parse('while (x < 5) { x = x * 3 }').to_ast
 => «while (x < 5) { x = x * 3 }»
@@ -64,11 +64,11 @@ $ bundle exec irb -I.
 => true
 >> Treetop.load('programming_with_nothing/lambda_calculus')
 => LambdaCalculusParser
->> require 'programming_with_nothing/programming_with_nothing'
+>> require 'programming_with_nothing'
 => true
 >> two = LambdaCalculusParser.new.parse('-> p { -> x { p[p[x]] } }').to_ast
 => -> p { -> x { p[p[x]] } }
->> require 'universality_is_everywhere/universality_is_everywhere'
+>> require 'universality_is_everywhere'
 => true
 >> two.to_ski
 => S[S[K[S]][S[K[K]][I]]][S[S[K[S]][S[K[K]][I]]][K[I]]]
