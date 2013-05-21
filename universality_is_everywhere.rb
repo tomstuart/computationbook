@@ -1,4 +1,5 @@
 require_relative 'universality_is_everywhere/cyclic_tag_systems'
+require_relative 'universality_is_everywhere/iota'
 require_relative 'universality_is_everywhere/partial_recursive_functions'
 require_relative 'universality_is_everywhere/ski_calculus'
 require_relative 'universality_is_everywhere/tag_systems'

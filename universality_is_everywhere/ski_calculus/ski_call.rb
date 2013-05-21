@@ -35,8 +35,4 @@ class SKICall < Struct.new(:left, :right)
 
     SKICall.new(SKICall.new(S, left_function), right_function)
   end
-
-  def to_iota
-    SKICall.new(left.to_iota, right.to_iota)
-  end
 end

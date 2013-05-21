@@ -32,8 +32,4 @@ class SKISymbol < Struct.new(:name)
       SKICall.new(K, self)
     end
   end
-
-  def to_iota
-    self
-  end
 end
