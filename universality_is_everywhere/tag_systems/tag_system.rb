@@ -1,5 +1,3 @@
-require_relative '../cyclic_tag_systems/cyclic_tag_encoder'
-
 class TagSystem < Struct.new(:current_string, :rulebook)
   def step
     self.current_string = rulebook.next_string(current_string)
@@ -12,17 +10,5 @@ class TagSystem < Struct.new(:current_string, :rulebook)
     end
 
     puts current_string
-  end
-
-  def alphabet
-    (rulebook.alphabet + current_string.chars.entries).uniq.sort
-  end
-
-  def encoder
-    CyclicTagEncoder.new(alphabet)
-  end
-
-  def to_cyclic
-    TagSystem.new(encoder.encode_string(current_string), rulebook.to_cyclic(encoder))
   end
 end
