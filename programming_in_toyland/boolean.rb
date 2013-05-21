@@ -1,4 +1,4 @@
-require_relative '../the-meaning-of-programs/boolean'
+require_relative '../the_meaning_of_programs/boolean'
 require_relative 'type'
 
 class Boolean

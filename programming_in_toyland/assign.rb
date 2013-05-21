@@ -1,4 +1,4 @@
-require_relative '../the-meaning-of-programs/assign'
+require_relative '../the_meaning_of_programs/assign'
 require_relative 'type'
 
 class Assign

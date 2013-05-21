@@ -5,22 +5,22 @@ This is the example code for [Understanding Computation](http://computationbook.
 
 Right now it’s a pretty rough dump of code from the book. Each chapter has its own directory:
 
-* Chapter 2: [The Meaning of Programs](the-meaning-of-programs)
-* Chapter 3: [The Simplest Computers](the-simplest-computers)
-* Chapter 4: [Just Add Power](just-add-power)
-* Chapter 5: [The Ultimate Machine](the-ultimate-machine)
-* Chapter 6: [Programming with Nothing](programming-with-nothing)
-* Chapter 7: [Universality is Everywhere](universality-is-everywhere)
-* Chapter 8: [Impossible Programs](impossible-programs)
-* Chapter 9: [Programming in Toyland](programming-in-toyland)
+* Chapter 2: [The Meaning of Programs](the_meaning_of_programs)
+* Chapter 3: [The Simplest Computers](the_simplest_computers)
+* Chapter 4: [Just Add Power](just_add_power)
+* Chapter 5: [The Ultimate Machine](the_ultimate_machine)
+* Chapter 6: [Programming with Nothing](programming_with_nothing)
+* Chapter 7: [Universality is Everywhere](universality_is_everywhere)
+* Chapter 8: [Impossible Programs](impossible_programs)
+* Chapter 9: [Programming in Toyland](programming_in_toyland)
 
-Each directory contains definitions of the classes implemented in that chapter, as well as a file named after the chapter (e.g. [`just-add-power/just-add-power.rb`](just-add-power/just-add-power.rb)) that can be `require`d to load all the code for that chapter.
+Each directory contains definitions of the classes implemented in that chapter, as well as a file named after the chapter (e.g. [`just_add_power/just_add_power.rb`](just_add_power/just_add_power.rb)) that can be `require`d to load all the code for that chapter.
 
 For example:
 
 ```irb
 $ irb -I.
->> require 'universality-is-everywhere/universality-is-everywhere'
+>> require 'universality_is_everywhere/universality_is_everywhere'
 => true
 >> identity = SKICall.new(SKICall.new(S, K), SKICall.new(K, K))
 => S[K][K[K]]
@@ -42,9 +42,9 @@ If you run `bundle install` to install [Treetop](http://treetop.rubyforge.org/),
 $ bundle exec irb -I.
 >> require 'treetop'
 => true
->> Treetop.load('the-meaning-of-programs/simple')
+>> Treetop.load('the_meaning_of_programs/simple')
 => SimpleParser
->> require 'the-meaning-of-programs/the-meaning-of-programs'
+>> require 'the_meaning_of_programs/the_meaning_of_programs'
 => true
 >> program = SimpleParser.new.parse('while (x < 5) { x = x * 3 }').to_ast
 => «while (x < 5) { x = x * 3 }»
@@ -62,13 +62,13 @@ $ bundle exec irb -I.
 $ bundle exec irb -I.
 >> require 'treetop'
 => true
->> Treetop.load('programming-with-nothing/lambda_calculus')
+>> Treetop.load('programming_with_nothing/lambda_calculus')
 => LambdaCalculusParser
->> require 'programming-with-nothing/programming-with-nothing'
+>> require 'programming_with_nothing/programming_with_nothing'
 => true
 >> two = LambdaCalculusParser.new.parse('-> p { -> x { p[p[x]] } }').to_ast
 => -> p { -> x { p[p[x]] } }
->> require 'universality-is-everywhere/universality-is-everywhere'
+>> require 'universality_is_everywhere/universality_is_everywhere'
 => true
 >> two.to_ski
 => S[S[K[S]][S[K[K]][I]]][S[S[K[S]][S[K[K]][I]]][K[I]]]

@@ -1,4 +1,4 @@
-require_relative '../programming-with-nothing/lc_call'
+require_relative '../programming_with_nothing/lc_call'
 require_relative 'ski_call'
 
 class LCCall

@@ -1,4 +1,4 @@
-require_relative '../programming-with-nothing/lc_variable'
+require_relative '../programming_with_nothing/lc_variable'
 require_relative 'ski_symbol'
 
 class LCVariable

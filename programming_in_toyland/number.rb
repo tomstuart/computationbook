@@ -1,4 +1,4 @@
-require_relative '../the-meaning-of-programs/number'
+require_relative '../the_meaning_of_programs/number'
 require_relative 'type'
 
 class Number

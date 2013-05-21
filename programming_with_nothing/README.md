@@ -4,9 +4,9 @@ Programming with Nothing
 This chapter includes an implementation of FizzBuzz written with just procs:
 
 ```irb
-$ cd programming-with-nothing
+$ cd programming_with_nothing
 $ irb -I.
->> require 'programming-with-nothing'
+>> require 'programming_with_nothing'
 fizzbuzz.rb:13: warning: already initialized constant TRUE
 fizzbuzz.rb:14: warning: already initialized constant FALSE
 => true
@@ -46,13 +46,13 @@ Watch [this video](http://rubymanor.org/3/videos/programming_with_nothing/) for 
 There’s also an implementation of the call-by-value small-step operational semantics of the lambda calculus, along with a parser for Ruby-style lambda calculus expressions:
 
 ```irb
-$ cd programming-with-nothing
+$ cd programming_with_nothing
 $ bundle exec irb -I.
 >> require 'treetop'
 => true
 >> Treetop.load('lambda_calculus')
 => LambdaCalculusParser
->> require 'programming-with-nothing'
+>> require 'programming_with_nothing'
 fizzbuzz.rb:13: warning: already initialized constant TRUE
 fizzbuzz.rb:14: warning: already initialized constant FALSE
 => true
