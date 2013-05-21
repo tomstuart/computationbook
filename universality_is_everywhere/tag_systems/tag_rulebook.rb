@@ -1,5 +1,5 @@
-require_relative 'cyclic_tag_rule'
-require_relative 'cyclic_tag_rulebook'
+require_relative '../cyclic_tag_systems/cyclic_tag_rule'
+require_relative '../cyclic_tag_systems/cyclic_tag_rulebook'
 
 class TagRulebook < Struct.new(:deletion_number, :rules)
   def next_string(string)

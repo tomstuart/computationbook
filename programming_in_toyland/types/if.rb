@@ -1,4 +1,4 @@
-require_relative '../the_meaning_of_programs/if'
+require_relative '../../the_meaning_of_programs/if'
 require_relative 'type'
 
 class If

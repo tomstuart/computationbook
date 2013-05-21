@@ -1,4 +1,4 @@
-require_relative '../the_meaning_of_programs/less_than'
+require_relative '../../the_meaning_of_programs/less_than'
 require_relative 'type'
 
 class LessThan

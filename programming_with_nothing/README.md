@@ -48,7 +48,7 @@ There’s also an implementation of the call-by-value small-step operational sem
 $ bundle exec irb -I.
 >> require 'treetop'
 => true
->> Treetop.load('programming_with_nothing/lambda_calculus')
+>> Treetop.load('programming_with_nothing/lambda_calculus/lambda_calculus')
 => LambdaCalculusParser
 >> require 'programming_with_nothing'
 fizzbuzz.rb:13: warning: already initialized constant TRUE

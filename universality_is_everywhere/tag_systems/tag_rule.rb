@@ -1,4 +1,4 @@
-require_relative 'cyclic_tag_rule'
+require_relative '../cyclic_tag_systems/cyclic_tag_rule'
 
 class TagRule < Struct.new(:first_character, :append_characters)
   def applies_to?(string)

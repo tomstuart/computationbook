@@ -1,4 +1,4 @@
-require_relative '../programming_with_nothing/lc_function'
+require_relative '../../programming_with_nothing/lambda_calculus/lc_function'
 
 class LCFunction
   def to_ski

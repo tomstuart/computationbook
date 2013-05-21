@@ -62,7 +62,7 @@ $ bundle exec irb -I.
 $ bundle exec irb -I.
 >> require 'treetop'
 => true
->> Treetop.load('programming_with_nothing/lambda_calculus')
+>> Treetop.load('programming_with_nothing/lambda_calculus/lambda_calculus')
 => LambdaCalculusParser
 >> require 'programming_with_nothing'
 => true

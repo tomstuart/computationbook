@@ -1,4 +1,4 @@
-require_relative 'tag_rule'
+require_relative '../tag_systems/tag_rule'
 
 class CyclicTagRule < TagRule
   FIRST_CHARACTER = '1'

@@ -1,0 +1,3 @@
+require_relative 'cyclic_tag_systems/cyclic_tag_encoder'
+require_relative 'cyclic_tag_systems/cyclic_tag_rule'
+require_relative 'cyclic_tag_systems/cyclic_tag_rulebook'

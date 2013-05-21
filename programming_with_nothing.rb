@@ -1,5 +1,2 @@
 require_relative 'programming_with_nothing/fizzbuzz'
-require_relative 'programming_with_nothing/helpers'
-require_relative 'programming_with_nothing/lc_call'
-require_relative 'programming_with_nothing/lc_function'
-require_relative 'programming_with_nothing/lc_variable'
+require_relative 'programming_with_nothing/lambda_calculus'

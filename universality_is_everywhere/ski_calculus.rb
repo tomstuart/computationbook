@@ -1,0 +1,6 @@
+require_relative 'ski_calculus/lc_call'
+require_relative 'ski_calculus/lc_function'
+require_relative 'ski_calculus/lc_variable'
+require_relative 'ski_calculus/ski_call'
+require_relative 'ski_calculus/ski_combinator'
+require_relative 'ski_calculus/ski_symbol'

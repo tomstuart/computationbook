@@ -1,4 +1,4 @@
-require_relative '../the_meaning_of_programs/sequence'
+require_relative '../../the_meaning_of_programs/sequence'
 require_relative 'type'
 
 class Sequence

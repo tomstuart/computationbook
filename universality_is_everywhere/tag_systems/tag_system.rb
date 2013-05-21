@@ -1,4 +1,4 @@
-require_relative 'cyclic_tag_encoder'
+require_relative '../cyclic_tag_systems/cyclic_tag_encoder'
 
 class TagSystem < Struct.new(:current_string, :rulebook)
   def step

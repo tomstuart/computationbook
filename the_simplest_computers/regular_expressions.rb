@@ -1,0 +1,6 @@
+require_relative 'regular_expressions/choose'
+require_relative 'regular_expressions/concatenate'
+require_relative 'regular_expressions/empty'
+require_relative 'regular_expressions/literal'
+require_relative 'regular_expressions/pattern'
+require_relative 'regular_expressions/repeat'
