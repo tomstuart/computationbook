@@ -6,13 +6,30 @@ This is the example code for [Understanding Computation](http://computationbook.
 Right now it’s a pretty rough dump of code from the book. Each chapter has its own directory:
 
 * Chapter 2: [The Meaning of Programs](the_meaning_of_programs)
+    * [syntax](the_meaning_of_programs/syntax)
+    * [small-step operational semantics](the_meaning_of_programs/small_step)
+    * [big-step operational semantics](the_meaning_of_programs/big_step)
+    * [denotational semantics](the_meaning_of_programs/denotational)
 * Chapter 3: [The Simplest Computers](the_simplest_computers)
+    * [deterministic and nondeterministic finite automata](the_simplest_computers/finite_automata)
+    * [regular expressions](the_simplest_computers/regular_expressions)
 * Chapter 4: [Just Add Power](just_add_power)
+    * [deterministic and nondeterministic pushdown automata](just_add_power)
 * Chapter 5: [The Ultimate Machine](the_ultimate_machine)
+    * [deterministic Turing machines](the_ultimate_machine)
 * Chapter 6: [Programming with Nothing](programming_with_nothing)
+    * [FizzBuzz with procs](programming_with_nothing/fizzbuzz)
+    * [the lambda calculus](programming_with_nothing/lambda_calculus)
 * Chapter 7: [Universality is Everywhere](universality_is_everywhere)
+    * [partial recursive functions](universality_is_everywhere/partial_recursive_functions)
+    * [the SKI combinator calculus](universality_is_everywhere/ski_calculus)
+    * [Iota](universality_is_everywhere/iota)
+    * [tag systems](universality_is_everywhere/tag_systems)
+    * [cyclic tag systems](universality_is_everywhere/cyclic_tag_systems)
 * Chapter 8: [Impossible Programs](impossible_programs)
 * Chapter 9: [Programming in Toyland](programming_in_toyland)
+    * [abstract interpretation: arithmetic with signs](programming_in_toyland/signs)
+    * [type systems](programming_in_toyland/types)
 
 Each directory contains definitions of the classes implemented in that chapter. There’s also a file named after each chapter (e.g. [`just_add_power.rb`](just_add_power.rb)) that can be `require`d to load all the code for that chapter.
 
