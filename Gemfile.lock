@@ -1,7 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    diff-lcs (1.2.4)
     polyglot (0.3.3)
+    rspec (2.13.0)
+      rspec-core (~> 2.13.0)
+      rspec-expectations (~> 2.13.0)
+      rspec-mocks (~> 2.13.0)
+    rspec-core (2.13.1)
+    rspec-expectations (2.13.0)
+      diff-lcs (>= 1.1.3, < 2.0)
+    rspec-mocks (2.13.1)
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
@@ -10,4 +19,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  rspec
   treetop
