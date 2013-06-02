@@ -59,7 +59,7 @@ If you run `bundle install` to install [Treetop](http://treetop.rubyforge.org/),
 $ bundle exec irb -I.
 >> require 'treetop'
 => true
->> Treetop.load('the_meaning_of_programs/syntax/simple')
+>> Treetop.load('the_meaning_of_programs/parser/simple')
 => SimpleParser
 >> require 'the_meaning_of_programs'
 => true
