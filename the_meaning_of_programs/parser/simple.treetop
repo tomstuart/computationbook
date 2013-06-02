@@ -1,6 +1,20 @@
 grammar Simple
   rule statement
-    while / assign
+    sequence
+  end
+
+  rule sequence
+    first:sequenced_statement '; ' second:sequence {
+      def to_ast
+        Sequence.new(first.to_ast, second.to_ast)
+      end
+    }
+    /
+    sequenced_statement
+  end
+
+  rule sequenced_statement
+    while / assign / if / do_nothing
   end
 
   rule while
@@ -19,14 +33,40 @@ grammar Simple
     }
   end
 
+  rule if
+    'if (' condition:expression ') { ' consequence:statement ' } else { ' alternative:statement ' }' {
+      def to_ast
+        If.new(condition.to_ast, consequence.to_ast, alternative.to_ast)
+      end
+    }
+  end
+
+  rule do_nothing
+    'do-nothing' {
+      def to_ast
+        DoNothing.new
+      end
+    }
+  end
+
   rule expression
     less_than
   end
 
   rule less_than
-    left:multiply ' < ' right:less_than {
+    left:add ' < ' right:less_than {
       def to_ast
         LessThan.new(left.to_ast, right.to_ast)
+      end
+    }
+    /
+    add
+  end
+
+  rule add
+    left:multiply ' + ' right:add {
+      def to_ast
+        Add.new(left.to_ast, right.to_ast)
       end
     }
     /
@@ -44,13 +84,21 @@ grammar Simple
   end
 
   rule term
-    number / variable
+    number / boolean / variable
   end
 
   rule number
     [0-9]+ {
       def to_ast
         Number.new(text_value.to_i)
+      end
+    }
+  end
+
+  rule boolean
+    ('true' / 'false') ![a-z] {
+      def to_ast
+        Boolean.new(text_value == 'true')
       end
     }
   end
