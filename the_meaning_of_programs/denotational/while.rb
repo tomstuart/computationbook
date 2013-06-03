@@ -7,4 +7,11 @@ class While
       " e" +
       " }"
   end
+
+  def to_javascript
+    "function (e) {" +
+      " while (#{condition.to_javascript}(e)) { e = (#{body.to_javascript}(e)); }" +
+      " return e;" +
+      " }"
+  end
 end

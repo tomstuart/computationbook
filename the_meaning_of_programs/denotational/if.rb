@@ -7,4 +7,11 @@ class If
       " else (#{alternative.to_ruby}).call(e)" +
       " end }"
   end
+
+  def to_javascript
+    "function (e) { if (#{condition.to_javascript}(e))" +
+      " { return (#{consequence.to_javascript}(e)); }" +
+      " else { return (#{alternative.to_javascript}(e)); }" +
+      " }"
+  end
 end
