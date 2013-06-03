@@ -5,7 +5,7 @@ describe 'the denotational semantics of Simple' do
   describe 'expressions' do
     describe 'a variable' do
       subject { Variable.new(:x) }
-      let(:value) { double }
+      let(:value) { 42 }
       let(:environment) { { x: value } }
 
       it { should be_denoted_by '-> e { e[:x] }' }
@@ -135,7 +135,7 @@ describe 'the denotational semantics of Simple' do
   describe 'statements' do
     describe 'do-nothing' do
       subject { DoNothing.new }
-      let(:environment) { double }
+      let(:environment) { { x: 42 } }
 
       it { should be_denoted_by '-> e { e }' }
       it { should mean(environment).within(environment) }
