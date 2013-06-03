@@ -74,9 +74,19 @@ grammar Simple
   end
 
   rule multiply
-    left:term ' * ' right:multiply {
+    left:brackets ' * ' right:multiply {
       def to_ast
         Multiply.new(left.to_ast, right.to_ast)
+      end
+    }
+    /
+    brackets
+  end
+
+  rule brackets
+    '(' expression ')' {
+      def to_ast
+        expression.to_ast
       end
     }
     /

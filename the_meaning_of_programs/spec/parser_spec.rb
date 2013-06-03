@@ -21,6 +21,10 @@ describe 'the Simple parser' do
       specify { 'falsehood'.should parse_as Variable.new(:falsehood) }
     end
 
+    describe 'brackets' do
+      specify { '(((42)))'.should parse_as Number.new(42) }
+    end
+
     describe 'less than' do
       specify { 'x < 5'.should parse_as LessThan.new(Variable.new(:x), Number.new(5)) }
     end
@@ -28,19 +32,25 @@ describe 'the Simple parser' do
     describe 'multiplication' do
       specify { '1 * 2'.should parse_as Multiply.new(Number.new(1), Number.new(2)) }
       specify { '1 * 2 * 3'.should parse_as Multiply.new(Number.new(1), Multiply.new(Number.new(2), Number.new(3))) }
+      specify { '(1 * 2) * 3'.should parse_as Multiply.new(Multiply.new(Number.new(1), Number.new(2)), Number.new(3)) }
     end
 
     describe 'addition' do
       specify { '1 + 2'.should parse_as Add.new(Number.new(1), Number.new(2)) }
       specify { '1 + 2 + 3'.should parse_as Add.new(Number.new(1), Add.new(Number.new(2), Number.new(3))) }
+      specify { '(1 + 2) + 3'.should parse_as Add.new(Add.new(Number.new(1), Number.new(2)), Number.new(3)) }
     end
 
     describe 'operator precedence' do
       specify { '1 + 2 < 3'.should parse_as LessThan.new(Add.new(Number.new(1), Number.new(2)), Number.new(3)) }
+      specify { '1 + (2 < 3)'.should parse_as Add.new(Number.new(1), LessThan.new(Number.new(2), Number.new(3))) }
       specify { '1 < 2 + 3'.should parse_as LessThan.new(Number.new(1), Add.new(Number.new(2), Number.new(3))) }
+      specify { '(1 < 2) + 3'.should parse_as Add.new(LessThan.new(Number.new(1), Number.new(2)), Number.new(3)) }
       specify { '1 + 2 * 3'.should parse_as Add.new(Number.new(1), Multiply.new(Number.new(2), Number.new(3))) }
       specify { '1 + 2 < 3 * 4'.should parse_as LessThan.new(Add.new(Number.new(1), Number.new(2)), Multiply.new(Number.new(3), Number.new(4))) }
+      specify { '(1 + 2) * 3'.should parse_as Multiply.new(Add.new(Number.new(1), Number.new(2)), Number.new(3)) }
       specify { '1 * 2 + 3'.should parse_as Add.new(Multiply.new(Number.new(1), Number.new(2)), Number.new(3)) }
+      specify { '1 * (2 + 3)'.should parse_as Multiply.new(Number.new(1), Add.new(Number.new(2), Number.new(3))) }
     end
   end
 
