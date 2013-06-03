@@ -57,4 +57,45 @@ describe 'the syntax of Simple' do
       it { should look_like '1 < 2' }
     end
   end
+
+  describe 'statements' do
+    describe 'do-nothing' do
+      subject { DoNothing.new }
+
+      it { should look_like 'do-nothing' }
+    end
+
+    describe 'assignment' do
+      subject { Assign.new(:x, Number.new(5)) }
+
+      its(:name) { should == :x }
+      its(:expression) { should == Number.new(5) }
+      it { should look_like 'x = 5' }
+    end
+
+    describe 'sequence' do
+      subject { Sequence.new(DoNothing.new, Assign.new(:x, Number.new(1))) }
+
+      its(:first) { should == DoNothing.new }
+      its(:second) { should == Assign.new(:x, Number.new(1)) }
+      it { should look_like 'do-nothing; x = 1' }
+    end
+
+    describe 'if' do
+      subject { If.new(LessThan.new(Number.new(3), Number.new(4)), Assign.new(:x, Number.new(3)), Assign.new(:y, Number.new(3))) }
+
+      its(:condition) { should == LessThan.new(Number.new(3), Number.new(4)) }
+      its(:consequence) { should == Assign.new(:x, Number.new(3)) }
+      its(:alternative) { should == Assign.new(:y, Number.new(3)) }
+      it { should look_like 'if (3 < 4) { x = 3 } else { y = 3 }'}
+    end
+
+    describe 'while' do
+      subject { While.new(LessThan.new(Variable.new(:x), Number.new(5)), Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3)))) }
+
+      its(:condition) { should == LessThan.new(Variable.new(:x), Number.new(5)) }
+      its(:body) { should == Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3))) }
+      it { should look_like 'while (x < 5) { x = x * 3 }' }
+    end
+  end
 end

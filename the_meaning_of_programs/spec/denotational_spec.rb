@@ -131,4 +131,94 @@ describe 'the denotational semantics of Simple' do
       end
     end
   end
+
+  describe 'statements' do
+    describe 'do-nothing' do
+      subject { DoNothing.new }
+      let(:environment) { double }
+
+      describe 'denotational' do
+        it { should be_denoted_by '-> e { e }' }
+        it { should mean(environment).within(environment) }
+      end
+    end
+
+    describe 'assignment' do
+      let(:environment) { { x: 1, y: 2 } }
+
+      context 'without a reducible subexpression' do
+        subject { Assign.new(:x, Number.new(5)) }
+
+        it { should be_denoted_by '-> e { e.merge({ :x => (-> e { 5 }).call(e) }) }' }
+        it { should mean(x: 5, y: 2).within(environment) }
+      end
+
+      context 'with a reducible subexpression' do
+        subject { Assign.new(:x, Add.new(Number.new(2), Number.new(3))) }
+
+        it { should be_denoted_by '-> e { e.merge({ :x => (-> e { (-> e { 2 }).call(e) + (-> e { 3 }).call(e) }).call(e) }) }' }
+        it { should mean(x: 5, y: 2).within(environment) }
+      end
+    end
+
+    describe 'sequence' do
+      let(:environment) { { y: 3 } }
+
+      context 'without reducible substatements' do
+        subject { Sequence.new(DoNothing.new, DoNothing.new) }
+
+        it { should be_denoted_by '-> e { (-> e { e }).call((-> e { e }).call(e)) }' }
+        it { should mean(environment).within(environment) }
+      end
+
+      context 'with a reducible substatement' do
+        context 'in first position' do
+          subject { Sequence.new(Assign.new(:x, Number.new(1)), DoNothing.new) }
+
+          it { should be_denoted_by '-> e { (-> e { e }).call((-> e { e.merge({ :x => (-> e { 1 }).call(e) }) }).call(e)) }' }
+          it { should mean(x: 1, y: 3).within(environment) }
+        end
+
+        context 'in second position' do
+          subject { Sequence.new(DoNothing.new, Assign.new(:x, Number.new(2))) }
+
+          it { should be_denoted_by '-> e { (-> e { e.merge({ :x => (-> e { 2 }).call(e) }) }).call((-> e { e }).call(e)) }' }
+          it { should mean(x: 2, y: 3).within(environment) }
+        end
+
+        context 'in both positions' do
+          subject { Sequence.new(Assign.new(:x, Number.new(1)), Assign.new(:x, Number.new(2))) }
+
+          it { should be_denoted_by '-> e { (-> e { e.merge({ :x => (-> e { 2 }).call(e) }) }).call((-> e { e.merge({ :x => (-> e { 1 }).call(e) }) }).call(e)) }' }
+          it { should mean(x: 2, y: 3).within(environment) }
+        end
+      end
+    end
+
+    describe 'if' do
+      let(:environment) { { x: 1, y: 2 } }
+
+      context 'without a reducible subexpression' do
+        subject { If.new(Boolean.new(false), Assign.new(:x, Number.new(3)), Assign.new(:y, Number.new(3))) }
+
+        it { should be_denoted_by '-> e { if (-> e { false }).call(e) then (-> e { e.merge({ :x => (-> e { 3 }).call(e) }) }).call(e) else (-> e { e.merge({ :y => (-> e { 3 }).call(e) }) }).call(e) end }' }
+        it { should mean(x: 1, y: 3).within(environment) }
+      end
+
+      context 'with a reducible subexpression' do
+        subject { If.new(LessThan.new(Number.new(3), Number.new(4)), Assign.new(:x, Number.new(3)), Assign.new(:y, Number.new(3))) }
+
+        it { should be_denoted_by '-> e { if (-> e { (-> e { 3 }).call(e) < (-> e { 4 }).call(e) }).call(e) then (-> e { e.merge({ :x => (-> e { 3 }).call(e) }) }).call(e) else (-> e { e.merge({ :y => (-> e { 3 }).call(e) }) }).call(e) end }' }
+        it { should mean(x: 3, y: 2).within(environment) }
+      end
+    end
+
+    describe 'while' do
+      subject { While.new(LessThan.new(Variable.new(:x), Number.new(5)), Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3)))) }
+      let(:environment) { { x: 1 } }
+
+      it { should be_denoted_by '-> e { while (-> e { (-> e { e[:x] }).call(e) < (-> e { 5 }).call(e) }).call(e); e = (-> e { e.merge({ :x => (-> e { (-> e { e[:x] }).call(e) * (-> e { 3 }).call(e) }).call(e) }) }).call(e); end; e }'}
+      it { should mean(x: 9).within(environment) }
+    end
+  end
 end
