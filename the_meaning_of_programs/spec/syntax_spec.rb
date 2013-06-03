@@ -33,6 +33,22 @@ describe 'the syntax of Simple' do
       end
     end
 
+    describe 'addition' do
+      subject { Add.new(Number.new(1), Number.new(2)) }
+
+      its(:left) { should == Number.new(1) }
+      its(:right) { should == Number.new(2) }
+      it { should look_like '1 + 2' }
+    end
+
+    describe 'multiplication' do
+      subject { Multiply.new(Number.new(2), Number.new(3)) }
+
+      its(:left) { should == Number.new(2) }
+      its(:right) { should == Number.new(3) }
+      it { should look_like '2 * 3' }
+    end
+
     describe 'less than' do
       subject { LessThan.new(Number.new(1), Number.new(2)) }
 

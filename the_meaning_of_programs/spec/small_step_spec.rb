@@ -65,17 +65,67 @@ describe 'the small-step operational semantics of Simple' do
     end
 
     describe 'multiplication' do
-      subject { Multiply.new(Number.new(2), Number.new(3)) }
+      context 'without reducible subexpressions' do
+        subject { Multiply.new(Number.new(2), Number.new(3)) }
 
-      it { should be_reducible }
-      it { should reduce_to Number.new(6) }
+        it { should be_reducible }
+        it { should reduce_to Number.new(6) }
+      end
+
+      context 'with a reducible subexpression' do
+        context 'on the left' do
+          subject { Multiply.new(Multiply.new(Number.new(2), Number.new(3)), Number.new(4)) }
+
+          it { should be_reducible }
+          it { should reduce_to Multiply.new(Number.new(6), Number.new(4)) }
+        end
+
+        context 'on the right' do
+          subject { Multiply.new(Number.new(2), Multiply.new(Number.new(3), Number.new(4))) }
+
+          it { should be_reducible }
+          it { should reduce_to Multiply.new(Number.new(2), Number.new(12)) }
+        end
+
+        context 'on both sides' do
+          subject { Multiply.new(Multiply.new(Number.new(2), Number.new(3)), Multiply.new(Number.new(4), Number.new(5))) }
+
+          it { should be_reducible }
+          it { should reduce_to Multiply.new(Number.new(6), Multiply.new(Number.new(4), Number.new(5))) }
+        end
+      end
     end
 
     describe 'less than' do
-      subject { LessThan.new(Number.new(1), Number.new(2)) }
+      context 'without reducible subexpressions' do
+        subject { LessThan.new(Number.new(1), Number.new(2)) }
 
-      it { should be_reducible }
-      it { should reduce_to Boolean.new(true) }
+        it { should be_reducible }
+        it { should reduce_to Boolean.new(true) }
+      end
+
+      context 'with a reducible subexpression' do
+        context 'on the left' do
+          subject { LessThan.new(Add.new(Number.new(2), Number.new(3)), Number.new(4)) }
+
+          it { should be_reducible }
+          it { should reduce_to LessThan.new(Number.new(5), Number.new(4)) }
+        end
+
+        context 'on the right' do
+          subject { LessThan.new(Number.new(1), Add.new(Number.new(2), Number.new(3))) }
+
+          it { should be_reducible }
+          it { should reduce_to LessThan.new(Number.new(1), Number.new(5)) }
+        end
+
+        context 'on both sides' do
+          subject { LessThan.new(Add.new(Number.new(1), Number.new(5)), Multiply.new(Number.new(2), Number.new(3))) }
+
+          it { should be_reducible }
+          it { should reduce_to LessThan.new(Number.new(6), Multiply.new(Number.new(2), Number.new(3))) }
+        end
+      end
     end
   end
 end
