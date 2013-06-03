@@ -137,10 +137,8 @@ describe 'the denotational semantics of Simple' do
       subject { DoNothing.new }
       let(:environment) { double }
 
-      describe 'denotational' do
-        it { should be_denoted_by '-> e { e }' }
-        it { should mean(environment).within(environment) }
-      end
+      it { should be_denoted_by '-> e { e }' }
+      it { should mean(environment).within(environment) }
     end
 
     describe 'assignment' do
