@@ -1,3 +1,5 @@
+require 'execjs'
+
 RSpec::Matchers.define :look_like do |expected|
   match do |subject|
     actual(subject) == expected
@@ -62,7 +64,11 @@ RSpec::Matchers.define :be_denoted_by do |expected|
   end
 
   def actual(subject)
-    subject.to_ruby
+    subject.send(:"to_#{denotation_language}")
+  end
+
+  def denotation_language
+    example.metadata[:in] || :ruby
   end
 
   failure_message_for_should do |subject|
@@ -76,11 +82,20 @@ RSpec::Matchers.define :mean do |expected|
   end
 
   def actual(subject)
-    eval(subject.to_ruby)[environment]
+    case denotation_language
+    when :ruby
+      eval(subject.to_ruby)[environment]
+    when :javascript
+      ExecJS.eval("#{subject.to_javascript}(#{ExecJS::JSON.encode(environment)})")
+    end
   end
 
   def environment
     @environment || {}
+  end
+
+  def denotation_language
+    example.metadata[:in] || :ruby
   end
 
   chain :within do |environment|
