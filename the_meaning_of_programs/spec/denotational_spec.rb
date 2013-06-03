@@ -8,30 +8,58 @@ describe 'the denotational semantics of Simple' do
       let(:value) { 42 }
       let(:environment) { { x: value } }
 
-      it { should be_denoted_by '-> e { e[:x] }' }
-      it { should mean(value).within(environment) }
+      context in: :ruby do
+        it { should be_denoted_by '-> e { e[:x] }' }
+        it { should mean(value).within(environment) }
+      end
+
+      context in: :javascript do
+        it { should be_denoted_by 'function (e) { return e["x"]; }' }
+        it { should mean(value).within(environment) }
+      end
     end
 
     describe 'a number' do
       subject { Number.new(42) }
 
-      it { should be_denoted_by '-> e { 42 }' }
-      it { should mean 42 }
+      context in: :ruby do
+        it { should be_denoted_by '-> e { 42 }' }
+        it { should mean 42 }
+      end
+
+      context in: :javascript do
+        it { should be_denoted_by 'function (e) { return 42; }' }
+        it { should mean 42 }
+      end
     end
 
     describe 'booleans' do
       describe 'true' do
         subject { Boolean.new(true) }
 
-        it { should be_denoted_by '-> e { true }' }
-        it { should mean true }
+        context in: :ruby do
+          it { should be_denoted_by '-> e { true }' }
+          it { should mean true }
+        end
+
+        context in: :javascript do
+          it { should be_denoted_by 'function (e) { return true; }' }
+          it { should mean true }
+        end
       end
 
       describe 'false' do
         subject { Boolean.new(false) }
 
-        it { should be_denoted_by '-> e { false }' }
-        it { should mean false }
+        context in: :ruby do
+          it { should be_denoted_by '-> e { false }' }
+          it { should mean false }
+        end
+
+        context in: :javascript do
+          it { should be_denoted_by 'function (e) { return false; }' }
+          it { should mean false }
+        end
       end
     end
 
@@ -39,8 +67,15 @@ describe 'the denotational semantics of Simple' do
       context 'without reducible subexpressions' do
         subject { Add.new(Number.new(1), Number.new(2)) }
 
-        it { should be_denoted_by '-> e { (-> e { 1 }).call(e) + (-> e { 2 }).call(e) }' }
-        it { should mean 3 }
+        context in: :ruby do
+          it { should be_denoted_by '-> e { (-> e { 1 }).call(e) + (-> e { 2 }).call(e) }' }
+          it { should mean 3 }
+        end
+
+        context in: :javascript do
+          it { should be_denoted_by 'function (e) { return (function (e) { return 1; }(e)) + (function (e) { return 2; }(e)); }' }
+          it { should mean 3 }
+        end
       end
 
       context 'with a reducible subexpression' do
@@ -71,8 +106,15 @@ describe 'the denotational semantics of Simple' do
       context 'without reducible subexpressions' do
         subject { Multiply.new(Number.new(2), Number.new(3)) }
 
-        it { should be_denoted_by '-> e { (-> e { 2 }).call(e) * (-> e { 3 }).call(e) }' }
-        it { should mean 6 }
+        context in: :ruby do
+          it { should be_denoted_by '-> e { (-> e { 2 }).call(e) * (-> e { 3 }).call(e) }' }
+          it { should mean 6 }
+        end
+
+        context in: :javascript do
+          it { should be_denoted_by 'function (e) { return (function (e) { return 2; }(e)) * (function (e) { return 3; }(e)); }' }
+          it { should mean 6 }
+        end
       end
 
       context 'with a reducible subexpression' do
@@ -103,8 +145,15 @@ describe 'the denotational semantics of Simple' do
       context 'without reducible subexpressions' do
         subject { LessThan.new(Number.new(1), Number.new(2)) }
 
-        it { should be_denoted_by '-> e { (-> e { 1 }).call(e) < (-> e { 2 }).call(e) }' }
-        it { should mean true }
+        context in: :ruby do
+          it { should be_denoted_by '-> e { (-> e { 1 }).call(e) < (-> e { 2 }).call(e) }' }
+          it { should mean true }
+        end
+
+        context in: :javascript do
+          it { should be_denoted_by 'function (e) { return (function (e) { return 1; }(e)) < (function (e) { return 2; }(e)); }' }
+          it { should mean true }
+        end
       end
 
       context 'with a reducible subexpression' do
