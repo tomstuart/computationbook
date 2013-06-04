@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.2.4)
+    execjs (1.4.0)
+      multi_json (~> 1.0)
+    multi_json (1.6.1)
     polyglot (0.3.3)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
@@ -19,5 +22,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  execjs
   rspec
   treetop
