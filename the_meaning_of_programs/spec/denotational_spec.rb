@@ -256,7 +256,7 @@ describe 'the denotational semantics of Simple' do
 
       context in: :javascript do
         it { should be_denoted_by 'function (e) { return e; }' }
-        it { should mean('x' => 42).within(environment) }
+        it { should mean(environment).within(environment) }
       end
     end
 
@@ -273,7 +273,7 @@ describe 'the denotational semantics of Simple' do
 
         context in: :javascript do
           it { should be_denoted_by 'function (e) { e["x"] = (function (e) { return 5; }(e)); return e; }' }
-          it { should mean('x' => 5, 'y' => 2).within(environment) }
+          it { should mean(x: 5, y: 2).within(environment) }
         end
       end
 
@@ -287,7 +287,7 @@ describe 'the denotational semantics of Simple' do
 
         context in: :javascript do
           it { should be_denoted_by 'function (e) { e["x"] = (function (e) { return (function (e) { return 2; }(e)) + (function (e) { return 3; }(e)); }(e)); return e; }' }
-          it { should mean('x' => 5, 'y' => 2).within(environment) }
+          it { should mean(x: 5, y: 2).within(environment) }
         end
       end
     end
@@ -305,7 +305,7 @@ describe 'the denotational semantics of Simple' do
 
         context in: :javascript do
           it { should be_denoted_by 'function (e) { return (function (e) { return e; }(function (e) { return e; }(e))); }' }
-          it { should mean('y' => 3).within(environment) }
+          it { should mean(environment).within(environment) }
         end
       end
 
@@ -320,7 +320,7 @@ describe 'the denotational semantics of Simple' do
 
           context in: :javascript do
             it { should be_denoted_by 'function (e) { return (function (e) { return e; }(function (e) { e["x"] = (function (e) { return 1; }(e)); return e; }(e))); }' }
-            it { should mean('x' => 1, 'y' => 3).within(environment) }
+            it { should mean(x: 1, y: 3).within(environment) }
           end
         end
 
@@ -334,7 +334,7 @@ describe 'the denotational semantics of Simple' do
 
           context in: :javascript do
             it { should be_denoted_by 'function (e) { return (function (e) { e["x"] = (function (e) { return 2; }(e)); return e; }(function (e) { return e; }(e))); }' }
-            it { should mean('x' => 2, 'y' => 3).within(environment) }
+            it { should mean(x: 2, y: 3).within(environment) }
           end
         end
 
@@ -348,7 +348,7 @@ describe 'the denotational semantics of Simple' do
 
           context in: :javascript do
             it { should be_denoted_by 'function (e) { return (function (e) { e["x"] = (function (e) { return 2; }(e)); return e; }(function (e) { e["x"] = (function (e) { return 1; }(e)); return e; }(e))); }' }
-            it { should mean('x' => 2, 'y' => 3).within(environment) }
+            it { should mean(x: 2, y: 3).within(environment) }
           end
         end
       end
@@ -367,7 +367,7 @@ describe 'the denotational semantics of Simple' do
 
         context in: :javascript do
           it { should be_denoted_by 'function (e) { if (function (e) { return false; }(e)) { return (function (e) { e["x"] = (function (e) { return 3; }(e)); return e; }(e)); } else { return (function (e) { e["y"] = (function (e) { return 3; }(e)); return e; }(e)); } }' }
-          it { should mean('x' => 1, 'y' => 3).within(environment) }
+          it { should mean(x: 1, y: 3).within(environment) }
         end
       end
 
@@ -381,7 +381,7 @@ describe 'the denotational semantics of Simple' do
 
         context in: :javascript do
           it { should be_denoted_by 'function (e) { if (function (e) { return (function (e) { return 3; }(e)) < (function (e) { return 4; }(e)); }(e)) { return (function (e) { e["x"] = (function (e) { return 3; }(e)); return e; }(e)); } else { return (function (e) { e["y"] = (function (e) { return 3; }(e)); return e; }(e)); } }' }
-          it { should mean('x' => 3, 'y' => 2).within(environment) }
+          it { should mean(x: 3, y: 2).within(environment) }
         end
       end
     end
@@ -397,7 +397,7 @@ describe 'the denotational semantics of Simple' do
 
       context in: :javascript do
         it { should be_denoted_by 'function (e) { while (function (e) { return (function (e) { return e["x"]; }(e)) < (function (e) { return 5; }(e)); }(e)) { e = (function (e) { e["x"] = (function (e) { return (function (e) { return e["x"]; }(e)) * (function (e) { return 3; }(e)); }(e)); return e; }(e)); } return e; }' }
-        it { should mean('x' => 9).within(environment) }
+        it { should mean(x: 9).within(environment) }
       end
     end
   end

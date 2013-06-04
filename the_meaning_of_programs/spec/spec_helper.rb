@@ -78,7 +78,7 @@ end
 
 RSpec::Matchers.define :mean do |expected|
   match do |subject|
-    actual(subject) == expected
+    actual(subject) == expected_for_denotation_language(expected)
   end
 
   def actual(subject)
@@ -98,12 +98,21 @@ RSpec::Matchers.define :mean do |expected|
     example.metadata[:in] || :ruby
   end
 
+  def expected_for_denotation_language(expected)
+    case denotation_language
+    when :ruby
+      expected
+    when :javascript
+      ExecJS::JSON.decode(ExecJS::JSON.encode(expected))
+    end
+  end
+
   chain :within do |environment|
     @environment = environment
   end
 
   failure_message_for_should do |subject|
-    "expected that #{subject.inspect} would reduce to #{expected.inspect} within #{environment.inspect}, but it reduces to #{actual(subject).inspect}"
+    "expected that #{subject.inspect} would reduce to #{expected_for_denotation_language(expected).inspect} within #{environment.inspect}, but it reduces to #{actual(subject).inspect}"
   end
 end
 
