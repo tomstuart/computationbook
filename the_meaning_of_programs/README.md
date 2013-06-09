@@ -9,15 +9,15 @@ $ bundle exec irb -I.
 => true
 >> expression = LessThan.new(Add.new(Variable.new(:x), Number.new(1)), Number.new(5))
 => «x + 1 < 5»
->> expression.reduce({ x: Number.new(3) })
+>> expression.reduce(x: Number.new(3))
 => «3 + 1 < 5»
->> expression.evaluate({ x: Number.new(3) })
+>> expression.evaluate(x: Number.new(3))
 => «true»
 >> expression.to_ruby
 => "-> e { (-> e { (-> e { e[:x] }).call(e) + (-> e { 1 }).call(e) }).call(e) < (-> e { 5 }).call(e) }"
 >> eval(expression.to_ruby)
 => #<Proc (lambda)>
->> eval(expression.to_ruby).call({ x: 3 })
+>> eval(expression.to_ruby).call(x: 3)
 => true
 ```
 
