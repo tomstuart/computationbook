@@ -32,18 +32,18 @@ expression.reducible?
 expression = expression.reduce
 expression.reducible?
 
-Machine.new(
+ExpressionMachine.new(
   Add.new(
     Multiply.new(Number.new(1), Number.new(2)),
     Multiply.new(Number.new(3), Number.new(4))
   )
 ).run
 
-Machine.new(
+ExpressionMachine.new(
   LessThan.new(Number.new(5), Add.new(Number.new(2), Number.new(2)))
 ).run
 
-Machine.new(
+ExpressionMachine.new(
   Add.new(Variable.new(:x), Variable.new(:y)),
   { x: Number.new(3), y: Number.new(4) }
 ).run
@@ -60,12 +60,12 @@ statement, environment = statement.reduce(environment)
 statement, environment = statement.reduce(environment)
 statement.reducible?
 
-Machine.new(
+StatementMachine.new(
   Assign.new(:x, Add.new(Variable.new(:x), Number.new(1))),
   { x: Number.new(2) }
 ).run
 
-Machine.new(
+StatementMachine.new(
   If.new(
     Variable.new(:x),
     Assign.new(:y, Number.new(1)),
@@ -73,12 +73,12 @@ Machine.new(
   ),
   { x: Boolean.new(true) }
 ).run
-Machine.new(
+StatementMachine.new(
   If.new(Variable.new(:x), Assign.new(:y, Number.new(1)), DoNothing.new),
   { x: Boolean.new(false) }
 ).run
 
-Machine.new(
+StatementMachine.new(
   Sequence.new(
     Assign.new(:x, Add.new(Number.new(1), Number.new(1))),
     Assign.new(:y, Add.new(Variable.new(:x), Number.new(3)))
@@ -86,7 +86,7 @@ Machine.new(
   {}
 ).run
 
-Machine.new(
+StatementMachine.new(
   While.new(
     LessThan.new(Variable.new(:x), Number.new(5)),
     Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3)))
@@ -94,7 +94,7 @@ Machine.new(
   { x: Number.new(1) }
 ).run
 
-Machine.new(
+StatementMachine.new(
   Sequence.new(
     Assign.new(:x, Boolean.new(true)),
     Assign.new(:x, Add.new(Variable.new(:x), Number.new(1)))

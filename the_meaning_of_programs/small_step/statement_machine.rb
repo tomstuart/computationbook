@@ -1,4 +1,4 @@
-class Machine < Struct.new(:statement, :environment)
+class StatementMachine < Struct.new(:statement, :environment)
   def step
     self.statement, self.environment = statement.reduce(environment)
   end
