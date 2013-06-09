@@ -135,3 +135,10 @@ RSpec::Matchers.define :parse_as do |expected|
     "expected that #{subject.inspect} would parse as #{expected.inspect}, but it parses as #{actual(subject).inspect}"
   end
 end
+
+RSpec::Matchers.define :run_without_errors do
+  match do |subject|
+    subject.run
+    true
+  end
+end
