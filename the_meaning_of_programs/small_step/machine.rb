@@ -15,7 +15,7 @@ class Machine
         raise "Unrecognized syntax: #{syntax.inspect}"
       end
 
-    $stderr.puts "WARNING: Automatically using #{machine_class} instead of #{self}"
+    $stderr.puts "WARNING: Automatically using #{machine_class} instead of #{self}. See the the_meaning_of_programs/README.md for details."
 
     machine_class.new(syntax, *args)
   end

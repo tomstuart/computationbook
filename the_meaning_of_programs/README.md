@@ -32,6 +32,39 @@ $ bundle exec irb -I.
 => true
 ```
 
+In the book, the `Machine` class is introduced as a way of evaluating *expressions* by repeatedly applying Simple’s small-step semantics, and later redefined as a way of evaluating *statements*. The example code can only define one `Machine` class, which has caused confusion (e.g. #1, #2) among people who expect to be able to use a single class to evaluate both expressions and statements. To clarify the situation, this repository contains two classes, `ExpressionMachine` and `StatementMachine`, which are able to evaluate expressions and statements respectively:
+
+```irb
+>> ExpressionMachine.new(LessThan.new(Add.new(Variable.new(:x), Number.new(1)), Number.new(5)), { x: Number.new(3) }).run
+x + 1 < 5
+3 + 1 < 5
+4 < 5
+true
+=> nil
+>> StatementMachine.new(Sequence.new(Assign.new(:x, Add.new(Variable.new(:x), Number.new(1))), Assign.new(:y, Multiply.new(Variable.new(:x), Number.new(2)))), { x: Number.new(3) }).run
+x = x + 1; y = x * 2, {:x=>«3»}
+x = 3 + 1; y = x * 2, {:x=>«3»}
+x = 4; y = x * 2, {:x=>«3»}
+do-nothing; y = x * 2, {:x=>«4»}
+y = x * 2, {:x=>«4»}
+y = 4 * 2, {:x=>«4»}
+y = 8, {:x=>«4»}
+do-nothing, {:x=>«4», :y=>«8»}
+=> nil
+```
+
+The `Machine` class should still work, albeit with a warning:
+
+```irb
+>> Machine.new(LessThan.new(Add.new(Variable.new(:x), Number.new(1)), Number.new(5)), { x: Number.new(3) }).run
+WARNING: Automatically using ExpressionMachine instead of Machine. See the_meaning_of_programs/README.md for details.
+x + 1 < 5
+3 + 1 < 5
+4 < 5
+true
+=> nil
+```
+
 There’s also a Treetop parser for Simple:
 
 ```irb
