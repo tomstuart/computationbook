@@ -1,6 +1,7 @@
 class Machine < Struct.new(:statement, :environment)
   def step
-    self.statement, self.environment = statement.reduce(environment)
+    self.statement, new_environment = statement.reduce(environment)
+    self.environment = new_environment unless new_environment.nil?
   end
 
   def run

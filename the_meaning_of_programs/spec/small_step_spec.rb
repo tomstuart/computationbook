@@ -2,6 +2,13 @@ require_relative 'spec_helper'
 require_relative '../small_step'
 
 describe 'the small-step operational semantics of Simple' do
+  describe 'a machine' do
+    context 'with an expression that accesses the environment twice' do
+      subject { Machine.new(Add.new(Variable.new(:x), Variable.new(:x)), {x: Number.new(1)}) }
+      it { should run_without_errors }
+    end
+  end
+
   describe 'expressions' do
     describe 'a variable' do
       subject { Variable.new(:x) }
