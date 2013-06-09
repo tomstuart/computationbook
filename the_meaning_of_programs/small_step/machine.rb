@@ -2,7 +2,13 @@ require_relative '../syntax'
 require_relative 'expression_machine'
 require_relative 'statement_machine'
 
-# This class is provided as a backwards-compatibility layer so that Machine.new continues to work.
+# Chapter 2 defines the Machine class to work with expressions, then redefines it to work with
+# statements. In this repository, these two definitions are both made available under separate
+# names: ExpressionMachine is a virtual machine which evaluates expressions by repeatedly
+# applying the small-step semantics, while StatementMachine does the same for statements.
+#
+# The below implementation of Machine is provided as a backwards-compatibility layer so that
+# Machine.new continues to work for those who are following along with the examples in the book.
 class Machine
   def self.new(syntax, *args)
     machine_class =
