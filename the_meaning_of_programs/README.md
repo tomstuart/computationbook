@@ -21,7 +21,7 @@ $ bundle exec irb -I.
 => true
 ```
 
-@mudge contributed an alternative denotational semantics which uses JavaScript as the denotation language:
+[@mudge](https://github.com/mudge) contributed an alternative denotational semantics which uses JavaScript as the denotation language:
 
 ```irb
 >> expression.to_javascript
@@ -32,7 +32,7 @@ $ bundle exec irb -I.
 => true
 ```
 
-In the book, the `Machine` class is introduced as a way of evaluating *expressions* by repeatedly applying Simple’s small-step semantics, and later redefined as a way of evaluating *statements*. The example code can only define one `Machine` class, which has caused confusion (e.g. #1, #2) among people who expect to be able to use a single class to evaluate both expressions and statements. To clarify the situation, this repository contains two classes, `ExpressionMachine` and `StatementMachine`, which are able to evaluate expressions and statements respectively:
+In the book, the `Machine` class is introduced as a way of evaluating *expressions* by repeatedly applying Simple’s small-step semantics, and later redefined as a way of evaluating *statements*. The example code can only define one `Machine` class, which has caused confusion (e.g. [#1](https://github.com/tomstuart/computationbook/issues/1), [#2](https://github.com/tomstuart/computationbook/issues/2)) among people who expect to be able to use a single class to evaluate both expressions and statements. To clarify the situation, this repository contains two classes, `ExpressionMachine` and `StatementMachine`, which are able to evaluate expressions and statements respectively:
 
 ```irb
 >> ExpressionMachine.new(LessThan.new(Add.new(Variable.new(:x), Number.new(1)), Number.new(5)), { x: Number.new(3) }).run
