@@ -7,6 +7,7 @@ Right now it’s a pretty rough dump of code from the book. Each chapter has its
 
 * Chapter 2: [The Meaning of Programs](the_meaning_of_programs)
     * [syntax](the_meaning_of_programs/syntax)
+    * [parser](the_meaning_of_programs/parser)
     * [small-step operational semantics](the_meaning_of_programs/small_step)
     * [big-step operational semantics](the_meaning_of_programs/big_step)
     * [denotational semantics](the_meaning_of_programs/denotational)
