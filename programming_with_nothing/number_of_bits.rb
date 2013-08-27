@@ -22,11 +22,27 @@ HUNDRED = -> p { -> x { p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[p[
 #
 # First in ruby to give a pattern to follow
 #
+#   def halve_and_count(pair)
+#     x, count = pair
+#
+#     if x == 1
+#       pair
+#     else
+#       [x / 2, count + 1]
+#     end
+#   end
+#
 #   def number_of_bits(x)
 #     if x == 0
 #       0
 #     else
-#       1 + number_of_bits(x/2)
+#       pair = [x, 0]
+#
+#       x.times do
+#         pair = halve_and_count(pair)
+#       end
+#
+#       pair.last + 1
 #     end
 #   end
 
@@ -42,24 +58,56 @@ LEFT = -> p { p[ -> x { -> y { x } }] }
 RIGHT = -> p { p[ -> x { -> y { y } }] }
 SLIDE = -> p { PAIR[RIGHT[p]][INCREMENT[RIGHT[p]]] }
 DECREMENT = -> n { LEFT[n[SLIDE][PAIR[ZERO][ZERO]]] }
-Z = -> f { -> x { f[-> y { x[x][y] }] }[-> x { f[-> y { x[x][y] }] }] }
 IS_ONE = -> n { IS_ZERO[DECREMENT[n]] }
-DIVIDE_BY_TWO = Z[-> f { -> n { IF[IS_ZERO][n][
-    ZERO
-  ][IF[IS_ONE][n][
-    ZERO
+
+# def subtract_two_and_count(pair)
+#   x, count = pair
+#
+#   if x == 0 || x == 1
+#     pair
+#   else
+#     [x - 2, count + 1]
+#   end
+# end
+#
+# def divide_by_two(x)
+#   pair = [x, 0]
+#
+#   x.times do
+#     pair = subtract_two_and_count(pair)
+#   end
+#
+#   pair.last
+# end
+
+SUBTRACT_TWO_AND_COUNT = -> p {
+  IF[IS_ZERO[LEFT[p]]][
+    p
+  ][IF[IS_ONE[LEFT[p]]][
+    p
   ][
-    INCREMENT[-> x { f[DECREMENT[DECREMENT[n]]][x] }]
+    PAIR[DECREMENT[DECREMENT[LEFT[p]]]][INCREMENT[RIGHT[p]]]
   ]]
-} } ]
+}
+
+DIVIDE_BY_TWO = -> x { RIGHT[x[SUBTRACT_TWO_AND_COUNT][PAIR[x][ZERO]]] }
 
 # THE SOLUTION - in lambda calculus
-NUMBER_OF_BITS = Z[-> f { -> n { IF[IS_ZERO[n][
+HALVE_AND_COUNT = -> p {
+  IF[IS_ONE[LEFT[p]]][
+    p
+  ][
+    PAIR[DIVIDE_BY_TWO[LEFT[p]]][INCREMENT[RIGHT[p]]]
+  ]
+}
+
+NUMBER_OF_BITS = -> x {
+  IF[IS_ZERO[x]][
     ZERO
   ][
-    INCREMENT[-> x { f[DIVIDE_BY_TWO[n]][x] }]
-  ]]
-} } ]
+    INCREMENT[RIGHT[x[HALVE_AND_COUNT][PAIR[x][ZERO]]]]
+  ]
+}
 
 describe 'to_integer' do
   it { to_integer(ZERO).should == 0 }
