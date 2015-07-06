@@ -4,7 +4,7 @@ Programming with Nothing
 This chapter includes an implementation of FizzBuzz written with just procs:
 
 ```irb
-$ irb -I.
+$ irb -I. --simple-prompt
 >> require 'programming_with_nothing'
 => true
 >> MULTIPLY[THREE][FIVE]
@@ -43,7 +43,7 @@ Watch [this video](http://rubymanor.org/3/videos/programming_with_nothing/) for 
 There’s also an implementation of the call-by-value small-step operational semantics of the lambda calculus, along with a parser for Ruby-style lambda calculus expressions:
 
 ```irb
-$ bundle exec irb -I.
+$ bundle exec irb -I. --simple-prompt
 >> require 'treetop'
 => true
 >> Treetop.load('programming_with_nothing/lambda_calculus/lambda_calculus')

@@ -37,7 +37,7 @@ Each directory contains definitions of the classes implemented in that chapter. 
 For example:
 
 ```irb
-$ irb -I.
+$ irb -I. --simple-prompt
 >> require 'universality_is_everywhere'
 => true
 >> identity = SKICall.new(SKICall.new(S, K), SKICall.new(K, K))
@@ -57,7 +57,7 @@ x
 If you run `bundle install` to install [Treetop](http://treetop.rubyforge.org/), you can try out the parsers:
 
 ```irb
-$ bundle exec irb -I.
+$ bundle exec irb -I. --simple-prompt
 >> require 'treetop'
 => true
 >> Treetop.load('the_meaning_of_programs/parser/simple')
@@ -77,7 +77,7 @@ $ bundle exec irb -I.
 ```
 
 ```irb
-$ bundle exec irb -I.
+$ bundle exec irb -I. --simple-prompt
 >> require 'treetop'
 => true
 >> Treetop.load('programming_with_nothing/lambda_calculus/lambda_calculus')
