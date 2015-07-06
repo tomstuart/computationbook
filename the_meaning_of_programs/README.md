@@ -4,7 +4,7 @@ The Meaning of Programs
 [This chapter](http://computationbook.com/sample) includes Ruby implementations of the semantics of a toy programming language (“Simple”) written in three contrasting styles: [small-step operational](small_step), [big-step operational](big_step) and [denotational](denotational):
 
 ```irb
-$ bundle exec irb -I.
+$ bundle exec irb -I. --simple-prompt
 >> require 'the_meaning_of_programs'
 => true
 >> expression = LessThan.new(Add.new(Variable.new(:x), Number.new(1)), Number.new(5))
